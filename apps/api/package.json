@@ -1,0 +1,36 @@
+{
+  "name": "@toa/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules .turbo"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@toa/shared": "workspace:*",
+    "@toa/db": "workspace:*",
+    "@toa/engine": "workspace:*",
+    "drizzle-orm": "^0.39.0",
+    "fastify": "^5.2.0",
+    "@fastify/cors": "^11.0.0",
+    "@fastify/websocket": "^11.0.0",
+    "@trpc/server": "^11.0.0",
+    "better-auth": "^1.2.0",
+    "inngest": "^3.29.0",
+    "ioredis": "^5.4.0",
+    "zod": "^3.24.0",
+    "superjson": "^2.2.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "@toa/tsconfig": "workspace:*",
+    "@types/ws": "^8.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

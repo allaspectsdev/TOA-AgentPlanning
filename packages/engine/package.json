@@ -1,0 +1,29 @@
+{
+  "name": "@toa/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./inngest": "./src/inngest/index.ts",
+    "./compiler": "./src/compiler/index.ts",
+    "./runtime": "./src/runtime/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist node_modules .turbo"
+  },
+  "dependencies": {
+    "@toa/shared": "workspace:*",
+    "@toa/db": "workspace:*",
+    "inngest": "^3.29.0",
+    "@anthropic-ai/sdk": "^0.39.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@toa/tsconfig": "workspace:*",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
