@@ -2,8 +2,8 @@
 // Serialization / Deserialization for WorkflowDefinition
 // ---------------------------------------------------------------------------
 
-import type { WorkflowDefinition } from '../types/workflow.js';
-import { workflowDefinitionSchema } from '../validators/workflow.js';
+import type { WorkflowDefinition } from '../types/workflow';
+import { workflowDefinitionSchema } from '../validators/workflow';
 
 // ---------------------------------------------------------------------------
 // Serialization

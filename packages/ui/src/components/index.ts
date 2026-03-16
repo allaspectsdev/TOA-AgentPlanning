@@ -1,7 +1,7 @@
-export { Button, buttonVariants, type ButtonProps } from './button.js';
-export { Badge, badgeVariants, type BadgeProps } from './badge.js';
-export { Input, type InputProps } from './input.js';
-export { Textarea, type TextareaProps } from './textarea.js';
+export { Button, buttonVariants, type ButtonProps } from './button';
+export { Badge, badgeVariants, type BadgeProps } from './badge';
+export { Input, type InputProps } from './input';
+export { Textarea, type TextareaProps } from './textarea';
 export {
   Select,
   SelectGroup,
@@ -13,7 +13,7 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
-} from './select.js';
+} from './select';
 export {
   Dialog,
   DialogPortal,
@@ -25,7 +25,7 @@ export {
   DialogFooter,
   DialogTitle,
   DialogDescription,
-} from './dialog.js';
+} from './dialog';
 export {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -42,16 +42,16 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-} from './dropdown-menu.js';
+} from './dropdown-menu';
 export {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-} from './tooltip.js';
-export { Separator } from './separator.js';
-export { Switch } from './switch.js';
-export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs.js';
+} from './tooltip';
+export { Separator } from './separator';
+export { Switch } from './switch';
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs';
 export {
   Card,
   CardHeader,
@@ -59,5 +59,5 @@ export {
   CardTitle,
   CardDescription,
   CardContent,
-} from './card.js';
-export { ScrollArea, type ScrollAreaProps } from './scroll-area.js';
+} from './card';
+export { ScrollArea, type ScrollAreaProps } from './scroll-area';

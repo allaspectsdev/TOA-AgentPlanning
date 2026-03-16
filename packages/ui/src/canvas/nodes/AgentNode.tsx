@@ -4,8 +4,8 @@ import { Brain } from 'lucide-react';
 import type { AgentNodeData } from '@toa/shared';
 import { getModelById } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 export function AgentNode({ data, selected }: NodeProps) {
   const nodeData = data as unknown as AgentNodeData & { status?: NodeStatus };

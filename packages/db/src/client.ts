@@ -1,8 +1,8 @@
-import { neon } from '@neondatabase/serverless';
-import { drizzle, NeonHttpDatabase } from 'drizzle-orm/neon-http';
-import * as schema from './schema/index.js';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import * as schema from './schema/index';
 
-export type Database = NeonHttpDatabase<typeof schema>;
+export type Database = ReturnType<typeof createDb>;
 
 let _db: Database | null = null;
 
@@ -10,9 +10,9 @@ let _db: Database | null = null;
  * Creates a new database client instance connected to the specified URL.
  * Does not cache — each call produces a fresh client.
  */
-export function createDb(databaseUrl: string): Database {
-  const sql = neon(databaseUrl);
-  return drizzle(sql, { schema });
+export function createDb(databaseUrl: string) {
+  const client = postgres(databaseUrl);
+  return drizzle(client, { schema });
 }
 
 /**

@@ -4,15 +4,15 @@
 
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { createRouter } from './trpc.js';
-import { createContext } from './context.js';
-import { workflowRouter } from './routers/workflow.js';
-import { executionRouter } from './routers/execution.js';
-import { gateRouter } from './routers/gate.js';
-import { projectRouter } from './routers/project.js';
-import { organizationRouter } from './routers/organization.js';
-import { templateRouter } from './routers/template.js';
-import { agentRouter } from './routers/agent.js';
+import { createRouter } from './trpc';
+import { createContext } from './context';
+import { workflowRouter } from './routers/workflow';
+import { executionRouter } from './routers/execution';
+import { gateRouter } from './routers/gate';
+import { projectRouter } from './routers/project';
+import { organizationRouter } from './routers/organization';
+import { templateRouter } from './routers/template';
+import { agentRouter } from './routers/agent';
 
 // ---------------------------------------------------------------------------
 // App Router

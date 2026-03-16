@@ -8,7 +8,7 @@ import { eq, and, desc, sql, like } from 'drizzle-orm';
 import { workflows, workflowVersions } from '@toa/db';
 import { validateWorkflow, type ValidationResult } from '@toa/engine';
 import { diffWorkflows, type WorkflowDefinition } from '@toa/shared';
-import { createRouter, orgProcedure, requirePermission } from '../trpc.js';
+import { createRouter, orgProcedure, requirePermission } from '../trpc';
 
 // ---------------------------------------------------------------------------
 // Input Schemas

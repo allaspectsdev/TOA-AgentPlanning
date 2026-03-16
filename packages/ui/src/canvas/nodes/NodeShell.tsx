@@ -4,7 +4,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import type { Port } from '@toa/shared';
 
-import { cn } from '../../lib/utils.js';
+import { cn } from '../../lib/utils';
 
 export type NodeStatus =
   | 'idle'
@@ -65,7 +65,8 @@ export function NodeShell({
   return (
     <div
       className={cn(
-        'relative min-w-[200px] max-w-[280px] rounded-lg border border-border bg-card text-card-foreground',
+        'relative min-w-[200px] max-w-[280px] rounded-lg border border-border bg-card text-card-foreground shadow-md',
+        '[color:var(--color-card-foreground,#fafafa)] [background-color:var(--color-card,#0a0a0c)]',
         'border-l-4 transition-all duration-150',
         borderColor,
         selected && 'shadow-lg shadow-primary/20 ring-2 ring-primary/40',

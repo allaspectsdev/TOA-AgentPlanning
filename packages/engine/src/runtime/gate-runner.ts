@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import type { GateNode, GateApproval, GateStatus, GateResponse } from '@toa/shared';
-import type { ExecutionContext } from './context.js';
+import type { ExecutionContext } from './context';
 
 // ---------------------------------------------------------------------------
 // Types

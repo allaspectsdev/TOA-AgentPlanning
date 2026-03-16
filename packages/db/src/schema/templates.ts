@@ -8,7 +8,7 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { organizations } from './organizations.js';
+import { organizations } from './organizations';
 
 // ── Workflow Templates ──────────────────────────────────────────────────────
 

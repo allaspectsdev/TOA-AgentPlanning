@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import type { FastifyInstance } from 'fastify';
-import { registerExecutionFeed } from './execution-feed.js';
+import { registerExecutionFeed } from './execution-feed';
 
 /**
  * Register all WebSocket route handlers on the Fastify instance.

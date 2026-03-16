@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import { z } from 'zod';
-import { workflowNodeSchema } from './nodes.js';
+import { workflowNodeSchema } from './nodes';
 import {
   MAX_NODES_PER_WORKFLOW,
   MAX_EDGES_PER_WORKFLOW,
@@ -15,7 +15,7 @@ import {
   MAX_WORKFLOW_DESCRIPTION_LENGTH,
   MAX_VERSIONS_PER_WORKFLOW,
   MAX_EXECUTION_TIME_MINUTES,
-} from '../constants/limits.js';
+} from '../constants/limits';
 
 // ---------------------------------------------------------------------------
 // Edge Schemas

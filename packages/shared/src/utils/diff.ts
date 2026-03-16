@@ -2,9 +2,9 @@
 // Structural Diff for WorkflowDefinition
 // ---------------------------------------------------------------------------
 
-import type { WorkflowDefinition } from '../types/workflow.js';
-import type { WorkflowNode } from '../types/nodes.js';
-import type { WorkflowEdge } from '../types/edges.js';
+import type { WorkflowDefinition } from '../types/workflow';
+import type { WorkflowNode } from '../types/nodes';
+import type { WorkflowEdge } from '../types/edges';
 
 // ---------------------------------------------------------------------------
 // Change Types

@@ -200,6 +200,17 @@
     background-color: var(--color-accent) !important;
   }
 
+  /* Override React Flow's default node styling that forces white bg */
+  .react-flow__node {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+    color: inherit !important;
+  }
+
   /* Custom node base styling */
   .workflow-node {
     border-radius: var(--radius-lg);

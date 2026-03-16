@@ -12,20 +12,21 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
-    "@toa/shared": "workspace:*",
-    "@toa/db": "workspace:*",
-    "@toa/engine": "workspace:*",
-    "drizzle-orm": "^0.39.0",
-    "fastify": "^5.2.0",
+    "@better-auth/drizzle-adapter": "^1.5.5",
     "@fastify/cors": "^11.0.0",
     "@fastify/websocket": "^11.0.0",
+    "@toa/db": "workspace:*",
+    "@toa/engine": "workspace:*",
+    "@toa/shared": "workspace:*",
     "@trpc/server": "^11.0.0",
     "better-auth": "^1.2.0",
+    "dotenv": "^16.4.0",
+    "drizzle-orm": "^0.39.0",
+    "fastify": "^5.2.0",
     "inngest": "^3.29.0",
     "ioredis": "^5.4.0",
-    "zod": "^3.24.0",
     "superjson": "^2.2.0",
-    "dotenv": "^16.4.0"
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@toa/tsconfig": "workspace:*",

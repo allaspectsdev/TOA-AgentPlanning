@@ -2,7 +2,7 @@ import * as React from 'react';
 import { MiniMap as ReactFlowMiniMap } from '@xyflow/react';
 import { NODE_REGISTRY, type NodeType } from '@toa/shared';
 
-import { cn } from '../../lib/utils.js';
+import { cn } from '../../lib/utils';
 
 /**
  * Map from tailwind bg-* class in the node registry to a hex color

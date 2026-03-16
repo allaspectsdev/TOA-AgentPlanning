@@ -3,8 +3,8 @@
 // ---------------------------------------------------------------------------
 
 import type { ToolNode } from '@toa/shared';
-import type { ExecutionContext } from './context.js';
-import { callMcpTool } from '../mcp/client.js';
+import type { ExecutionContext } from './context';
+import { callMcpTool } from '../mcp/client';
 
 // ---------------------------------------------------------------------------
 // Types

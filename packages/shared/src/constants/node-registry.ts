@@ -2,7 +2,7 @@
 // Node Registry — metadata for every node type
 // ---------------------------------------------------------------------------
 
-import type { NodeType, Port } from '../types/nodes.js';
+import type { NodeType, Port } from '../types/nodes';
 
 export interface NodeRegistryEntry {
   /** Human-readable label shown in the palette. */

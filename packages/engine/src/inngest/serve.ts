@@ -6,8 +6,8 @@
 // with the Inngest serve handler.
 // ---------------------------------------------------------------------------
 
-import { executeWorkflow } from './functions/execute-workflow.js';
-import { handleGateApproval } from './functions/handle-gate-approval.js';
+import { executeWorkflow } from './functions/execute-workflow';
+import { handleGateApproval } from './functions/handle-gate-approval';
 
 /**
  * All Inngest functions that the engine exposes.

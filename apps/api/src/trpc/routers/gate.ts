@@ -7,7 +7,7 @@ import { TRPCError } from '@trpc/server';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { gateApprovals } from '@toa/db';
 import { inngest } from '@toa/engine';
-import { createRouter, orgProcedure, requirePermission } from '../trpc.js';
+import { createRouter, orgProcedure, requirePermission } from '../trpc';
 
 // ---------------------------------------------------------------------------
 // Input Schemas

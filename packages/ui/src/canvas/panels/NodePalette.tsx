@@ -14,9 +14,9 @@ import {
 } from 'lucide-react';
 import { NODE_REGISTRY, getNodesByCategory, type NodeType } from '@toa/shared';
 
-import { cn } from '../../lib/utils.js';
-import { ScrollArea } from '../../components/scroll-area.js';
-import { Separator } from '../../components/separator.js';
+import { cn } from '../../lib/utils';
+import { ScrollArea } from '../../components/scroll-area';
+import { Separator } from '../../components/separator';
 
 /**
  * Map from the icon name string stored in NODE_REGISTRY to

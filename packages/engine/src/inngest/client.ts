@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import { EventSchemas, Inngest } from 'inngest';
-import type { Events } from './events.js';
+import type { Events } from './events';
 
 /**
  * The Inngest client used by every function in the engine package.

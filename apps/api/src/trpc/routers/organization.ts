@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { eq, and, desc, sql } from 'drizzle-orm';
 import { organizations, organizationMembers, users } from '@toa/db';
-import { createRouter, orgProcedure, adminProcedure, requirePermission } from '../trpc.js';
+import { createRouter, orgProcedure, adminProcedure, requirePermission } from '../trpc';
 
 // ---------------------------------------------------------------------------
 // Input Schemas

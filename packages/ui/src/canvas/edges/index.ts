@@ -1,8 +1,8 @@
-export { DataEdge } from './DataEdge.js';
-export { ConditionalEdge } from './ConditionalEdge.js';
+export { DataEdge } from './DataEdge';
+export { ConditionalEdge } from './ConditionalEdge';
 
-import { DataEdge } from './DataEdge.js';
-import { ConditionalEdge } from './ConditionalEdge.js';
+import { DataEdge } from './DataEdge';
+import { ConditionalEdge } from './ConditionalEdge';
 
 /**
  * Map of all custom edge types for React Flow's `edgeTypes` prop.

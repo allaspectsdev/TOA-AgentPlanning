@@ -6,7 +6,7 @@ import type { FastifyRequest, FastifyReply } from 'fastify';
 import { getDb, type Database, type User, type Session, type Organization, type OrganizationMember } from '@toa/db';
 import { users, sessions, organizations, organizationMembers } from '@toa/db';
 import { eq, and } from 'drizzle-orm';
-import type { OrgRole } from '../auth/permissions.js';
+import type { OrgRole } from '../auth/permissions';
 
 // ---------------------------------------------------------------------------
 // Context Type

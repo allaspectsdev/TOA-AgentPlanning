@@ -10,7 +10,7 @@ export {
   callMcpTool,
   type McpToolDefinition,
   type McpServerConnection,
-} from './client.js';
+} from './client';
 
 export {
   registerServer,
@@ -25,4 +25,4 @@ export {
   listAllTools,
   clearRegistry,
   type McpServerEntry,
-} from './registry.js';
+} from './registry';

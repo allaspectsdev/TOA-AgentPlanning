@@ -4,7 +4,7 @@
 
 import Anthropic from '@anthropic-ai/sdk';
 import type { AgentNode } from '@toa/shared';
-import type { ExecutionContext } from './context.js';
+import type { ExecutionContext } from './context';
 
 // ---------------------------------------------------------------------------
 // Types

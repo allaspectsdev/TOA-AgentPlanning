@@ -3,8 +3,8 @@ import type { NodeProps } from '@xyflow/react';
 import { Database } from 'lucide-react';
 import type { MemoryNodeData } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 const memoryTypeLabels: Record<MemoryNodeData['memoryType'], string> = {
   conversation_buffer: 'Conversation',

@@ -3,8 +3,8 @@ import type { NodeProps } from '@xyflow/react';
 import { ArrowRightFromLine } from 'lucide-react';
 import type { OutputNodeData } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 const outputTypeLabels: Record<OutputNodeData['outputType'], string> = {
   return: 'Return',

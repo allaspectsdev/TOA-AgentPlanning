@@ -10,8 +10,8 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { projects } from './projects.js';
-import { users } from './auth.js';
+import { projects } from './projects';
+import { users } from './auth';
 
 // ── Enums ───────────────────────────────────────────────────────────────────
 
@@ -36,7 +36,7 @@ export const workflows = pgTable(
     currentVersionId: uuid('current_version_id'),
     publishedVersionId: uuid('published_version_id'),
     status: workflowStatusEnum('status').notNull().default('draft'),
-    createdById: uuid('created_by_id')
+    createdById: text('created_by_id')
       .notNull()
       .references(() => users.id, { onDelete: 'restrict' }),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })
@@ -93,7 +93,7 @@ export const workflowVersions = pgTable(
     parentVersionId: uuid('parent_version_id'),
     definition: jsonb('definition').$type<Record<string, unknown>>().notNull(),
     changeMessage: text('change_message'),
-    createdById: uuid('created_by_id')
+    createdById: text('created_by_id')
       .notNull()
       .references(() => users.id, { onDelete: 'restrict' }),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })

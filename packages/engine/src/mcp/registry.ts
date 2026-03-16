@@ -7,7 +7,7 @@
 // about the tools it exposes.
 // ---------------------------------------------------------------------------
 
-import { listServerTools, type McpToolDefinition } from './client.js';
+import { listServerTools, type McpToolDefinition } from './client';
 
 // ---------------------------------------------------------------------------
 // Types

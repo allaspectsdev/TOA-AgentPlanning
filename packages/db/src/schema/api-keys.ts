@@ -7,8 +7,8 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { organizations } from './organizations.js';
-import { users } from './auth.js';
+import { organizations } from './organizations';
+import { users } from './auth';
 
 // ── Enums ───────────────────────────────────────────────────────────────────
 
@@ -34,7 +34,7 @@ export const apiKeys = pgTable(
       mode: 'date',
       withTimezone: true,
     }),
-    createdById: uuid('created_by_id')
+    createdById: text('created_by_id')
       .notNull()
       .references(() => users.id, { onDelete: 'restrict' }),
     createdAt: timestamp('created_at', { mode: 'date', withTimezone: true })

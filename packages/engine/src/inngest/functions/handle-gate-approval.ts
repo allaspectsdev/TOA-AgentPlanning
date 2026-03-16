@@ -11,13 +11,13 @@
 //   - Handles escalation logic
 // ---------------------------------------------------------------------------
 
-import { inngest } from '../client.js';
+import { inngest } from '../client';
 import {
   processGateResponse,
   handleGateTimeout,
   evaluateGateResponses,
   type GateResolutionResult,
-} from '../../runtime/gate-runner.js';
+} from '../../runtime/gate-runner';
 import type { GateApproval, GateResponse, GateStatus } from '@toa/shared';
 
 // ---------------------------------------------------------------------------

@@ -8,7 +8,7 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { users } from './auth.js';
+import { users } from './auth';
 
 // ── Enums ───────────────────────────────────────────────────────────────────
 
@@ -56,7 +56,7 @@ export const organizationMembers = pgTable(
     organizationId: uuid('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
-    userId: uuid('user_id')
+    userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     role: orgRoleEnum('role').notNull().default('member'),

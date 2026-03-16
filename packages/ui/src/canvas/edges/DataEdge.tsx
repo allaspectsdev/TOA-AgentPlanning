@@ -5,7 +5,7 @@ import {
   type EdgeProps,
 } from '@xyflow/react';
 
-import { cn } from '../../lib/utils.js';
+import { cn } from '../../lib/utils';
 
 interface DataEdgeData {
   label?: string;

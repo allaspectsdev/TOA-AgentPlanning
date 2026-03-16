@@ -2,8 +2,8 @@
 // Workflow Definition Types
 // ---------------------------------------------------------------------------
 
-import type { WorkflowNode } from './nodes.js';
-import type { WorkflowEdge } from './edges.js';
+import type { WorkflowNode } from './nodes';
+import type { WorkflowEdge } from './edges';
 
 /** Viewport state of the canvas editor. */
 export interface Viewport {

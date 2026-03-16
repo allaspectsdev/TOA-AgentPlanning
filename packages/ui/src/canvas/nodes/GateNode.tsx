@@ -3,8 +3,8 @@ import type { NodeProps } from '@xyflow/react';
 import { ShieldCheck } from 'lucide-react';
 import type { GateNodeData } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 const gateTypeLabels: Record<GateNodeData['gateType'], string> = {
   approval: 'Approval',

@@ -2,8 +2,8 @@
 // Graph Utilities
 // ---------------------------------------------------------------------------
 
-import type { WorkflowNode } from '../types/nodes.js';
-import type { WorkflowEdge } from '../types/edges.js';
+import type { WorkflowNode } from '../types/nodes';
+import type { WorkflowEdge } from '../types/edges';
 
 /** Adjacency list representation used internally. */
 interface AdjacencyList {

@@ -3,12 +3,12 @@
 // ---------------------------------------------------------------------------
 
 // Inngest client & functions
-export { inngest, type ToaInngest } from './inngest/client.js';
-export type { Events, EventData } from './inngest/events.js';
-export { inngestFunctions } from './inngest/serve.js';
-export { executeWorkflow } from './inngest/functions/execute-workflow.js';
-export { handleGateApproval } from './inngest/functions/handle-gate-approval.js';
-export { executeNode, type NodeExecutionResult } from './inngest/functions/execute-node.js';
+export { inngest, type ToaInngest } from './inngest/client';
+export type { Events, EventData } from './inngest/events';
+export { inngestFunctions } from './inngest/serve';
+export { executeWorkflow } from './inngest/functions/execute-workflow';
+export { handleGateApproval } from './inngest/functions/handle-gate-approval';
+export { executeNode, type NodeExecutionResult } from './inngest/functions/execute-node';
 
 // Compiler
 export {
@@ -25,7 +25,7 @@ export {
   type TopologicalResult,
   type ValidationResult,
   type ValidationError,
-} from './compiler/index.js';
+} from './compiler/index';
 
 // Runtime
 export {
@@ -49,7 +49,7 @@ export {
   type GateRunnerResult,
   type GateResolutionResult,
   type MemoryRunnerResult,
-} from './runtime/index.js';
+} from './runtime/index';
 
 // MCP
 export {
@@ -70,4 +70,4 @@ export {
   type McpToolDefinition,
   type McpServerConnection,
   type McpServerEntry,
-} from './mcp/index.js';
+} from './mcp/index';

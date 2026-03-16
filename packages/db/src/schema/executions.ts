@@ -9,8 +9,8 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { workflows, workflowVersions } from './workflows.js';
-import { users } from './auth.js';
+import { workflows, workflowVersions } from './workflows';
+import { users } from './auth';
 
 // ── Enums ───────────────────────────────────────────────────────────────────
 
@@ -60,7 +60,7 @@ export const executions = pgTable(
     workflowVersionId: uuid('workflow_version_id')
       .notNull()
       .references(() => workflowVersions.id, { onDelete: 'restrict' }),
-    triggeredById: uuid('triggered_by_id').references(() => users.id, {
+    triggeredById: text('triggered_by_id').references(() => users.id, {
       onDelete: 'set null',
     }),
     triggerType: triggerTypeEnum('trigger_type').notNull(),

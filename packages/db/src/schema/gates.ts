@@ -8,8 +8,8 @@ import {
   index,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { executions, executionSteps } from './executions.js';
-import { users } from './auth.js';
+import { executions, executionSteps } from './executions';
+import { users } from './auth';
 
 // ── Enums ───────────────────────────────────────────────────────────────────
 
@@ -38,7 +38,7 @@ export const gateApprovals = pgTable(
     assignedTo: text('assigned_to')
       .array()
       .$type<string[]>(),
-    approvedBy: uuid('approved_by').references(() => users.id, {
+    approvedBy: text('approved_by').references(() => users.id, {
       onDelete: 'set null',
     }),
     reviewComment: text('review_comment'),

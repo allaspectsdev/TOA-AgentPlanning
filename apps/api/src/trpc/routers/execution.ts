@@ -13,7 +13,7 @@ import {
   workflowVersions,
 } from '@toa/db';
 import { inngest } from '@toa/engine';
-import { createRouter, orgProcedure, requirePermission } from '../trpc.js';
+import { createRouter, orgProcedure, requirePermission } from '../trpc';
 
 // ---------------------------------------------------------------------------
 // Input Schemas

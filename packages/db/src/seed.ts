@@ -1,11 +1,11 @@
 import 'dotenv/config';
-import { createDb } from './client.js';
+import { createDb } from './client';
 import {
   users,
   organizations,
   organizationMembers,
   projects,
-} from './schema/index.js';
+} from './schema/index';
 
 async function seed() {
   const databaseUrl = process.env.DATABASE_URL;

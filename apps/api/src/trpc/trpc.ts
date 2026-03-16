@@ -2,10 +2,10 @@
 // tRPC Initialization
 // ---------------------------------------------------------------------------
 
-import { initTRPC } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
-import type { Context } from './context.js';
-import { isAuthenticated, withOrganization, requirePermission } from './middleware.js';
+import type { Context } from './context';
+import { checkPermission, type Resource, type Action } from '../auth/permissions';
 
 // ---------------------------------------------------------------------------
 // tRPC instance
@@ -28,30 +28,105 @@ export const t = initTRPC.context<Context>().create({
 });
 
 // ---------------------------------------------------------------------------
+// Middleware
+// ---------------------------------------------------------------------------
+
+export const isAuthenticated = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.user || !ctx.session) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'You must be logged in to perform this action.',
+    });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      user: ctx.user,
+      session: ctx.session,
+    },
+  });
+});
+
+export const withOrganization = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.user || !ctx.session) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'You must be logged in to perform this action.',
+    });
+  }
+
+  if (!ctx.organization) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Organization not found. Provide a valid x-org-id header.',
+    });
+  }
+
+  if (!ctx.orgMembership || !ctx.orgRole) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'You are not a member of this organization.',
+    });
+  }
+
+  return next({
+    ctx: {
+      ...ctx,
+      user: ctx.user,
+      session: ctx.session,
+      organization: ctx.organization,
+      orgMembership: ctx.orgMembership,
+      orgRole: ctx.orgRole,
+    },
+  });
+});
+
+export function requirePermission(resource: Resource, action: Action) {
+  return t.middleware(async ({ ctx, next }) => {
+    if (!ctx.user || !ctx.session) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You must be logged in to perform this action.',
+      });
+    }
+
+    if (!ctx.organization || !ctx.orgRole) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Organization context is required for this operation.',
+      });
+    }
+
+    if (!checkPermission(ctx.orgRole, resource, action)) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: `Insufficient permissions: cannot '${action}' on '${resource}'.`,
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        user: ctx.user,
+        session: ctx.session,
+        organization: ctx.organization,
+        orgMembership: ctx.orgMembership!,
+        orgRole: ctx.orgRole,
+      },
+    });
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Router & procedure factories
 // ---------------------------------------------------------------------------
 
-/** Create a new tRPC router. */
 export const createRouter = t.router;
-
-/** Create a caller factory for server-side calls. */
 export const createCallerFactory = t.createCallerFactory;
-
-/** Public procedure — no authentication required. */
 export const publicProcedure = t.procedure;
-
-/** Protected procedure — requires a valid session. */
 export const protectedProcedure = t.procedure.use(isAuthenticated);
-
-/** Organization procedure — requires auth + org membership. */
 export const orgProcedure = t.procedure.use(withOrganization);
-
-/**
- * Admin procedure — requires auth + org membership with admin or owner role.
- * For more granular checks, use `orgProcedure` with `requirePermission`.
- */
 export const adminProcedure = t.procedure
   .use(withOrganization)
   .use(requirePermission('org_settings', 'update'));
-
-export { requirePermission };

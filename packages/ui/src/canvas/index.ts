@@ -1,3 +1,3 @@
-export * from './nodes/index.js';
-export * from './edges/index.js';
-export * from './panels/index.js';
+export * from './nodes/index';
+export * from './edges/index';
+export * from './panels/index';

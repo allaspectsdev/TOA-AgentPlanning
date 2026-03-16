@@ -1,3 +1,3 @@
-export * from './components/index.js';
-export * from './canvas/index.js';
-export { cn } from './lib/utils.js';
+export * from './components/index';
+export * from './canvas/index';
+export { cn } from './lib/utils';

@@ -1,6 +1,5 @@
 import {
   pgTable,
-  uuid,
   text,
   timestamp,
   uniqueIndex,
@@ -10,11 +9,12 @@ import {
 import { relations } from 'drizzle-orm';
 
 // ── Users ───────────────────────────────────────────────────────────────────
+// Better-Auth generates its own string IDs, so we use text() not uuid()
 
 export const users = pgTable(
   'users',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey(),
     email: text('email').notNull(),
     name: text('name').notNull(),
     avatarUrl: text('avatar_url'),
@@ -42,8 +42,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const sessions = pgTable(
   'sessions',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: uuid('user_id')
+    id: text('id').primaryKey(),
+    userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     token: text('token').notNull(),
@@ -71,13 +71,13 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }));
 
-// ── Accounts (OAuth providers) ──────────────────────────────────────────────
+// ── Accounts (OAuth providers + credentials) ────────────────────────────────
 
 export const accounts = pgTable(
   'accounts',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: uuid('user_id')
+    id: text('id').primaryKey(),
+    userId: text('user_id')
       .notNull()
       .references(() => users.id, { onDelete: 'cascade' }),
     accountId: text('account_id').notNull(),
@@ -124,7 +124,7 @@ export const accountsRelations = relations(accounts, ({ one }) => ({
 export const verifications = pgTable(
   'verifications',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey(),
     identifier: text('identifier').notNull(),
     value: text('value').notNull(),
     expiresAt: timestamp('expires_at', { mode: 'date', withTimezone: true }).notNull(),

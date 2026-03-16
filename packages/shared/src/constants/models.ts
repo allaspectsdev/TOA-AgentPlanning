@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Available AI Models
+// Available AI Models — Updated March 2026
 // ---------------------------------------------------------------------------
 
 export interface ModelDefinition {
@@ -8,7 +8,7 @@ export interface ModelDefinition {
   /** Human-friendly display name. */
   name: string;
   /** Provider / vendor. */
-  provider: 'anthropic' | 'openai' | 'google' | 'meta' | 'mistral';
+  provider: 'anthropic' | 'openai' | 'google' | 'meta' | 'mistral' | 'deepseek' | 'xai';
   /** Maximum input context window in tokens. */
   contextWindow: number;
   /** Maximum output tokens the model can produce. */
@@ -20,51 +20,69 @@ export interface ModelDefinition {
 }
 
 export const AVAILABLE_MODELS: ModelDefinition[] = [
-  // ---- Anthropic ---------------------------------------------------------
+  // ── Anthropic ─────────────────────────────────────────────────────────────
   {
-    id: 'claude-sonnet-4-20250514',
-    name: 'Claude Sonnet 4',
+    id: 'claude-opus-4-6',
+    name: 'Claude Opus 4.6',
     provider: 'anthropic',
-    contextWindow: 200_000,
-    maxOutput: 16_384,
+    contextWindow: 1_000_000,
+    maxOutput: 128_000,
     supportsTools: true,
     supportsVision: true,
   },
   {
-    id: 'claude-opus-4-20250514',
-    name: 'Claude Opus 4',
+    id: 'claude-sonnet-4-6',
+    name: 'Claude Sonnet 4.6',
     provider: 'anthropic',
-    contextWindow: 200_000,
-    maxOutput: 32_000,
+    contextWindow: 1_000_000,
+    maxOutput: 64_000,
     supportsTools: true,
     supportsVision: true,
   },
   {
-    id: 'claude-haiku-4-20250514',
-    name: 'Claude Haiku 4',
+    id: 'claude-opus-4-5-20251101',
+    name: 'Claude Opus 4.5',
     provider: 'anthropic',
     contextWindow: 200_000,
-    maxOutput: 16_384,
+    maxOutput: 64_000,
+    supportsTools: true,
+    supportsVision: true,
+  },
+  {
+    id: 'claude-sonnet-4-5-20250929',
+    name: 'Claude Sonnet 4.5',
+    provider: 'anthropic',
+    contextWindow: 200_000,
+    maxOutput: 64_000,
+    supportsTools: true,
+    supportsVision: true,
+  },
+  {
+    id: 'claude-haiku-4-5-20251001',
+    name: 'Claude Haiku 4.5',
+    provider: 'anthropic',
+    contextWindow: 200_000,
+    maxOutput: 64_000,
     supportsTools: true,
     supportsVision: true,
   },
 
-  // ---- OpenAI ------------------------------------------------------------
+  // ── OpenAI ────────────────────────────────────────────────────────────────
   {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
+    id: 'gpt-5.4',
+    name: 'GPT-5.4',
     provider: 'openai',
-    contextWindow: 128_000,
-    maxOutput: 16_384,
+    contextWindow: 1_050_000,
+    maxOutput: 128_000,
     supportsTools: true,
     supportsVision: true,
   },
   {
-    id: 'gpt-4o-mini',
-    name: 'GPT-4o Mini',
+    id: 'gpt-5-mini-2025-08-07',
+    name: 'GPT-5 Mini',
     provider: 'openai',
-    contextWindow: 128_000,
-    maxOutput: 16_384,
+    contextWindow: 400_000,
+    maxOutput: 128_000,
     supportsTools: true,
     supportsVision: true,
   },
@@ -78,16 +96,34 @@ export const AVAILABLE_MODELS: ModelDefinition[] = [
     supportsVision: true,
   },
   {
-    id: 'o3-mini',
-    name: 'o3-mini',
+    id: 'o4-mini',
+    name: 'o4-mini',
     provider: 'openai',
     contextWindow: 200_000,
     maxOutput: 100_000,
     supportsTools: true,
-    supportsVision: false,
+    supportsVision: true,
   },
 
-  // ---- Google ------------------------------------------------------------
+  // ── Google ────────────────────────────────────────────────────────────────
+  {
+    id: 'gemini-3.1-pro-preview',
+    name: 'Gemini 3.1 Pro',
+    provider: 'google',
+    contextWindow: 1_000_000,
+    maxOutput: 64_000,
+    supportsTools: true,
+    supportsVision: true,
+  },
+  {
+    id: 'gemini-3-flash-preview',
+    name: 'Gemini 3 Flash',
+    provider: 'google',
+    contextWindow: 1_000_000,
+    maxOutput: 64_000,
+    supportsTools: true,
+    supportsVision: true,
+  },
   {
     id: 'gemini-2.5-pro',
     name: 'Gemini 2.5 Pro',
@@ -107,7 +143,7 @@ export const AVAILABLE_MODELS: ModelDefinition[] = [
     supportsVision: true,
   },
 
-  // ---- Meta --------------------------------------------------------------
+  // ── Meta ──────────────────────────────────────────────────────────────────
   {
     id: 'llama-4-maverick',
     name: 'Llama 4 Maverick',
@@ -117,14 +153,63 @@ export const AVAILABLE_MODELS: ModelDefinition[] = [
     supportsTools: true,
     supportsVision: true,
   },
+  {
+    id: 'llama-4-scout',
+    name: 'Llama 4 Scout',
+    provider: 'meta',
+    contextWindow: 10_000_000,
+    maxOutput: 16_384,
+    supportsTools: true,
+    supportsVision: true,
+  },
 
-  // ---- Mistral -----------------------------------------------------------
+  // ── DeepSeek ──────────────────────────────────────────────────────────────
+  {
+    id: 'deepseek-chat',
+    name: 'DeepSeek V3.2',
+    provider: 'deepseek',
+    contextWindow: 128_000,
+    maxOutput: 8_192,
+    supportsTools: true,
+    supportsVision: false,
+  },
+  {
+    id: 'deepseek-reasoner',
+    name: 'DeepSeek R1',
+    provider: 'deepseek',
+    contextWindow: 128_000,
+    maxOutput: 64_000,
+    supportsTools: true,
+    supportsVision: false,
+  },
+
+  // ── xAI ───────────────────────────────────────────────────────────────────
+  {
+    id: 'grok-4.20-beta-0309-reasoning',
+    name: 'Grok 4.20',
+    provider: 'xai',
+    contextWindow: 2_000_000,
+    maxOutput: 128_000,
+    supportsTools: true,
+    supportsVision: true,
+  },
+
+  // ── Mistral ───────────────────────────────────────────────────────────────
   {
     id: 'mistral-large-latest',
     name: 'Mistral Large',
     provider: 'mistral',
     contextWindow: 128_000,
-    maxOutput: 8_192,
+    maxOutput: 16_000,
+    supportsTools: true,
+    supportsVision: false,
+  },
+  {
+    id: 'open-mistral-nemo-2407',
+    name: 'Mistral NeMo',
+    provider: 'mistral',
+    contextWindow: 128_000,
+    maxOutput: 16_000,
     supportsTools: true,
     supportsVision: false,
   },
@@ -143,4 +228,4 @@ export function getModelsByProvider(
 }
 
 /** Default model used when creating a new agent node. */
-export const DEFAULT_MODEL_ID = 'claude-sonnet-4-20250514';
+export const DEFAULT_MODEL_ID = 'claude-sonnet-4-6';

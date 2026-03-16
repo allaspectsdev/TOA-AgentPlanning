@@ -18,12 +18,12 @@ import {
   topologicalSortWithGroups,
   refineParallelGroups,
   type ParallelGroup,
-} from './topological.js';
+} from './topological';
 import {
   validateWorkflow,
   type ValidationResult,
   type ValidationError,
-} from './validator.js';
+} from './validator';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -186,10 +186,10 @@ export function compileWorkflow(
 // Re-exports
 // ---------------------------------------------------------------------------
 
-export { topologicalSortWithGroups, refineParallelGroups } from './topological.js';
-export type { ParallelGroup, TopologicalResult } from './topological.js';
+export { topologicalSortWithGroups, refineParallelGroups } from './topological';
+export type { ParallelGroup, TopologicalResult } from './topological';
 export {
   validateWorkflow,
   validateWorkflowStructure,
-} from './validator.js';
-export type { ValidationResult, ValidationError } from './validator.js';
+} from './validator';
+export type { ValidationResult, ValidationError } from './validator';

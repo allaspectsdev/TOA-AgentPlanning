@@ -3,8 +3,8 @@ import type { NodeProps } from '@xyflow/react';
 import { Zap } from 'lucide-react';
 import type { TriggerNodeData } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 const triggerTypeLabels: Record<TriggerNodeData['triggerType'], string> = {
   manual: 'Manual',

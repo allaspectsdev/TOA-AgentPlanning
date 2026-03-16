@@ -11,10 +11,10 @@
 //   5. Finalises execution status.
 // ---------------------------------------------------------------------------
 
-import { inngest } from '../client.js';
-import { compileWorkflow, type ExecutionPlan } from '../../compiler/index.js';
-import { ExecutionContext } from '../../runtime/context.js';
-import { executeNode, type NodeExecutionResult } from './execute-node.js';
+import { inngest } from '../client';
+import { compileWorkflow, type ExecutionPlan } from '../../compiler/index';
+import { ExecutionContext } from '../../runtime/context';
+import { executeNode, type NodeExecutionResult } from './execute-node';
 import type {
   WorkflowDefinition,
   WorkflowNode,

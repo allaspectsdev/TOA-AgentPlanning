@@ -7,7 +7,7 @@ export {
   accounts,
   accountsRelations,
   verifications,
-} from './auth.js';
+} from './auth';
 export type {
   User,
   NewUser,
@@ -17,7 +17,7 @@ export type {
   NewAccount,
   Verification,
   NewVerification,
-} from './auth.js';
+} from './auth';
 
 // ── Organizations ───────────────────────────────────────────────────────────
 export {
@@ -27,20 +27,20 @@ export {
   organizationsRelations,
   organizationMembers,
   organizationMembersRelations,
-} from './organizations.js';
+} from './organizations';
 export type {
   Organization,
   NewOrganization,
   OrganizationMember,
   NewOrganizationMember,
-} from './organizations.js';
+} from './organizations';
 
 // ── Projects ────────────────────────────────────────────────────────────────
 export {
   projects,
   projectsRelations,
-} from './projects.js';
-export type { Project, NewProject } from './projects.js';
+} from './projects';
+export type { Project, NewProject } from './projects';
 
 // ── Workflows ───────────────────────────────────────────────────────────────
 export {
@@ -49,13 +49,13 @@ export {
   workflowsRelations,
   workflowVersions,
   workflowVersionsRelations,
-} from './workflows.js';
+} from './workflows';
 export type {
   Workflow,
   NewWorkflow,
   WorkflowVersion,
   NewWorkflowVersion,
-} from './workflows.js';
+} from './workflows';
 
 // ── Executions ──────────────────────────────────────────────────────────────
 export {
@@ -69,7 +69,7 @@ export {
   executionStepsRelations,
   executionLogs,
   executionLogsRelations,
-} from './executions.js';
+} from './executions';
 export type {
   Execution,
   NewExecution,
@@ -77,15 +77,15 @@ export type {
   NewExecutionStep,
   ExecutionLog,
   NewExecutionLog,
-} from './executions.js';
+} from './executions';
 
 // ── Gates ───────────────────────────────────────────────────────────────────
 export {
   gateStatusEnum,
   gateApprovals,
   gateApprovalsRelations,
-} from './gates.js';
-export type { GateApproval, NewGateApproval } from './gates.js';
+} from './gates';
+export type { GateApproval, NewGateApproval } from './gates';
 
 // ── Agents ──────────────────────────────────────────────────────────────────
 export {
@@ -94,28 +94,28 @@ export {
   agentTemplatesRelations,
   teamTemplates,
   teamTemplatesRelations,
-} from './agents.js';
+} from './agents';
 export type {
   AgentTemplate,
   NewAgentTemplate,
   TeamTemplate,
   NewTeamTemplate,
-} from './agents.js';
+} from './agents';
 
 // ── Workflow Templates ──────────────────────────────────────────────────────
 export {
   workflowTemplates,
   workflowTemplatesRelations,
-} from './templates.js';
+} from './templates';
 export type {
   WorkflowTemplate,
   NewWorkflowTemplate,
-} from './templates.js';
+} from './templates';
 
 // ── API Keys ────────────────────────────────────────────────────────────────
 export {
   apiKeyProviderEnum,
   apiKeys,
   apiKeysRelations,
-} from './api-keys.js';
-export type { ApiKey, NewApiKey } from './api-keys.js';
+} from './api-keys';
+export type { ApiKey, NewApiKey } from './api-keys';

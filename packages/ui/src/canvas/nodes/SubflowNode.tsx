@@ -3,8 +3,8 @@ import type { NodeProps } from '@xyflow/react';
 import { Workflow } from 'lucide-react';
 import type { SubflowNodeData } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 export function SubflowNode({ data, selected }: NodeProps) {
   const nodeData = data as unknown as SubflowNodeData & { status?: NodeStatus };

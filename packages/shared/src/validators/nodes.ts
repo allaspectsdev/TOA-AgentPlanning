@@ -10,7 +10,7 @@ import {
   MAX_TEAM_ROUNDS,
   MAX_GATE_TIMEOUT_MINUTES,
   MAX_NODE_RETRIES,
-} from '../constants/limits.js';
+} from '../constants/limits';
 
 // ---------------------------------------------------------------------------
 // Shared / Reusable Schemas

@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { AVAILABLE_MODELS, getModelById, getModelsByProvider } from '@toa/shared';
-import { createRouter, orgProcedure, requirePermission } from '../trpc.js';
+import { createRouter, orgProcedure, requirePermission } from '../trpc';
 
 // ---------------------------------------------------------------------------
 // Input Schemas

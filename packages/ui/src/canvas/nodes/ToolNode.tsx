@@ -3,8 +3,8 @@ import type { NodeProps } from '@xyflow/react';
 import { Wrench } from 'lucide-react';
 import type { ToolNodeData } from '@toa/shared';
 
-import { Badge } from '../../components/badge.js';
-import { NodeShell, type NodeStatus } from './NodeShell.js';
+import { Badge } from '../../components/badge';
+import { NodeShell, type NodeStatus } from './NodeShell';
 
 const toolTypeLabels: Record<ToolNodeData['toolType'], string> = {
   http_request: 'HTTP',

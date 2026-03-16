@@ -1,3 +1,3 @@
-export * from './node-registry.js';
-export * from './models.js';
-export * from './limits.js';
+export * from './node-registry';
+export * from './models';
+export * from './limits';

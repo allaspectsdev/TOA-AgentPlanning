@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 
 import { z } from 'zod';
-import { MAX_EXECUTION_INPUT_SIZE_BYTES } from '../constants/limits.js';
+import { MAX_EXECUTION_INPUT_SIZE_BYTES } from '../constants/limits';
 
 // ---------------------------------------------------------------------------
 // Trigger Execution Request

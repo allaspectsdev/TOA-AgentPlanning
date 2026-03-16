@@ -7,11 +7,11 @@
 // ---------------------------------------------------------------------------
 
 import type { WorkflowNode } from '@toa/shared';
-import type { ExecutionContext } from '../../runtime/context.js';
-import { runAgentNode, type AgentRunnerResult } from '../../runtime/agent-runner.js';
-import { runToolNode, type ToolRunnerResult } from '../../runtime/tool-runner.js';
-import { runConditionNode, type ConditionRunnerResult } from '../../runtime/condition-runner.js';
-import { runMemoryNode, type MemoryRunnerResult } from '../../runtime/memory-runner.js';
+import type { ExecutionContext } from '../../runtime/context';
+import { runAgentNode, type AgentRunnerResult } from '../../runtime/agent-runner';
+import { runToolNode, type ToolRunnerResult } from '../../runtime/tool-runner';
+import { runConditionNode, type ConditionRunnerResult } from '../../runtime/condition-runner';
+import { runMemoryNode, type MemoryRunnerResult } from '../../runtime/memory-runner';
 
 import type {
   AgentNode,
@@ -386,7 +386,7 @@ export async function executeNode(
       case 'gate': {
         // Gate nodes don't fully execute here — they create an approval
         // record and signal the workflow executor to wait.
-        const { runGateNode } = await import('../../runtime/gate-runner.js');
+        const { runGateNode } = await import('../../runtime/gate-runner');
         const result = await runGateNode(node, executionId, context);
         return {
           output: {

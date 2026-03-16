@@ -2,7 +2,7 @@ import * as React from 'react';
 import type { NodeProps } from '@xyflow/react';
 import type { NoteNodeData } from '@toa/shared';
 
-import { cn } from '../../lib/utils.js';
+import { cn } from '../../lib/utils';
 
 /**
  * Color map from the note's `color` field to tailwind background classes.

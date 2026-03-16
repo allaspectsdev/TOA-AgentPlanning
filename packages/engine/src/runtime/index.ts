@@ -6,23 +6,23 @@ export {
   ExecutionContext,
   type NodeOutput,
   type ResolvedInputs,
-} from './context.js';
+} from './context';
 
 export {
   runAgentNode,
   setAnthropicClient,
   type AgentRunnerResult,
-} from './agent-runner.js';
+} from './agent-runner';
 
 export {
   runToolNode,
   type ToolRunnerResult,
-} from './tool-runner.js';
+} from './tool-runner';
 
 export {
   runConditionNode,
   type ConditionRunnerResult,
-} from './condition-runner.js';
+} from './condition-runner';
 
 export {
   runGateNode,
@@ -32,10 +32,10 @@ export {
   processGateResponse,
   type GateRunnerResult,
   type GateResolutionResult,
-} from './gate-runner.js';
+} from './gate-runner';
 
 export {
   runMemoryNode,
   clearAllMemoryStores,
   type MemoryRunnerResult,
-} from './memory-runner.js';
+} from './memory-runner';
