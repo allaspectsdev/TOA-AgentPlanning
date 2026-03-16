@@ -7,8 +7,8 @@ import { httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 import { trpc } from '@/lib/trpc/react';
 
-const API_URL =
-  (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002') + '/trpc';
+// Route tRPC through Next.js API proxy so cookies are same-origin
+const API_URL = '/api/trpc';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(

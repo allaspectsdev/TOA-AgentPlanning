@@ -161,16 +161,14 @@ export default function DashboardLayout({
   const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
-    fetch(`${apiUrl}/api/auth/get-session`, { credentials: 'include' })
+    fetch('/api/auth/get-session', { credentials: 'include' })
       .then(res => res.ok ? res.json() : null)
       .then(data => { if (data?.user) setUser(data.user); })
       .catch(() => {});
   }, []);
 
   async function handleLogout() {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
-    await fetch(`${apiUrl}/api/auth/sign-out`, { method: 'POST', credentials: 'include' });
+    await fetch('/api/auth/sign-out', { method: 'POST', credentials: 'include' });
     window.location.href = '/login';
   }
 
