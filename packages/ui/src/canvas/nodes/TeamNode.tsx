@@ -21,7 +21,7 @@ export function TeamNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={Users}
       label={nodeData.label}
-      color="bg-indigo-500"
+      color="#6366f1"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

@@ -19,7 +19,7 @@ export function GateNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={ShieldCheck}
       label={nodeData.label}
-      color="bg-amber-500"
+      color="#f59e0b"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

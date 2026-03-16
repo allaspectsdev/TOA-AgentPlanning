@@ -121,11 +121,8 @@ export function NodePalette({ className }: NodePaletteProps) {
                         )}
                       >
                         <div
-                          className={cn(
-                            'flex items-center justify-center rounded-md p-1.5',
-                            entry.color,
-                            'text-white',
-                          )}
+                          className="flex items-center justify-center rounded-md p-1.5 text-white"
+                          style={{ backgroundColor: entry.color }}
                         >
                           {Icon ? (
                             <Icon className="h-3.5 w-3.5" />

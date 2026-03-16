@@ -19,7 +19,7 @@ export interface NodeShellProps {
   icon: LucideIcon;
   /** Display label for the node. */
   label: string;
-  /** Tailwind background-color class for the left accent border. */
+  /** Hex color for the left accent border and icon background. */
   color: string;
   /** Current execution status of this node. */
   status?: NodeStatus;
@@ -59,19 +59,19 @@ export function NodeShell({
   inputs = [],
   outputs = [],
 }: NodeShellProps) {
-  // Extract the color name from e.g. "bg-violet-500" -> "border-l-violet-500"
-  const borderColor = color.replace('bg-', 'border-l-');
-
   return (
     <div
       className={cn(
-        'relative min-w-[200px] max-w-[280px] rounded-lg border border-border bg-card text-card-foreground shadow-md',
-        '[color:var(--color-card-foreground,#fafafa)] [background-color:var(--color-card,#0a0a0c)]',
+        'relative min-w-[200px] max-w-[280px] rounded-lg border border-border shadow-md',
         'border-l-4 transition-all duration-150',
-        borderColor,
         selected && 'shadow-lg shadow-primary/20 ring-2 ring-primary/40',
         disabled && 'opacity-50 pointer-events-none',
       )}
+      style={{
+        backgroundColor: 'var(--color-card, #0a0a0c)',
+        color: 'var(--color-card-foreground, #fafafa)',
+        borderLeftColor: color,
+      }}
     >
       {/* Input Handles */}
       {inputs.map((port, index) => {
@@ -85,11 +85,8 @@ export function NodeShell({
             id={port.id}
             type="target"
             position={Position.Left}
-            className={cn(
-              '!w-3 !h-3 !rounded-full !border-2 !border-background',
-              color,
-            )}
-            style={{ top: `${topPercent}%` }}
+            className="!w-3 !h-3 !rounded-full !border-2 !border-background"
+            style={{ top: `${topPercent}%`, backgroundColor: color }}
             title={port.label}
           />
         );
@@ -107,11 +104,8 @@ export function NodeShell({
             id={port.id}
             type="source"
             position={Position.Right}
-            className={cn(
-              '!w-3 !h-3 !rounded-full !border-2 !border-background',
-              color,
-            )}
-            style={{ top: `${topPercent}%` }}
+            className="!w-3 !h-3 !rounded-full !border-2 !border-background"
+            style={{ top: `${topPercent}%`, backgroundColor: color }}
             title={port.label}
           />
         );
@@ -119,7 +113,10 @@ export function NodeShell({
 
       {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-border/50">
-        <div className={cn('rounded-md p-1', color, 'text-white')}>
+        <div
+          className="rounded-md p-1 text-white"
+          style={{ backgroundColor: color }}
+        >
           <Icon className="h-3.5 w-3.5" />
         </div>
         <span className="flex-1 truncate text-sm font-medium">{label}</span>

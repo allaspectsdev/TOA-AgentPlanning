@@ -19,7 +19,7 @@ export function TriggerNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={Zap}
       label={nodeData.label}
-      color="bg-green-500"
+      color="#22c55e"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

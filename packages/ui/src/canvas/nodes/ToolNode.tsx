@@ -20,7 +20,7 @@ export function ToolNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={Wrench}
       label={nodeData.label}
-      color="bg-orange-500"
+      color="#f97316"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

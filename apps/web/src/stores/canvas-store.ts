@@ -313,8 +313,70 @@ export const useCanvasStore = create<CanvasState>()(
     },
 
     onEdgesChange: (changes: EdgeChange[]) => {
-      set((state) => {
-        const nextEdges = applyEdgeChanges(changes, state.edges) as CanvasEdge[];
+      const state = get();
+
+      // Semantic cleanup: when edges are removed, undo any node data wiring
+      const removals = changes.filter((c) => c.type === 'remove');
+      if (removals.length > 0) {
+        const removedIds = new Set(removals.map((c) => 'id' in c ? c.id : ''));
+        const removedEdges = state.edges.filter((e) => removedIds.has(e.id));
+
+        let updatedNodes = [...state.nodes];
+        for (const edge of removedEdges) {
+          const sourceNode = updatedNodes.find((n) => n.id === edge.source);
+          const targetNode = updatedNodes.find((n) => n.id === edge.target);
+          if (!sourceNode || !targetNode) continue;
+
+          const sourceType = sourceNode.type;
+          const targetType = targetNode.type;
+          const targetData = targetNode.data as Record<string, unknown>;
+
+          // Agent removed from Team → remove from agents array
+          if (sourceType === 'agent' && targetType === 'team') {
+            const agents = (targetData.agents as unknown[]) ?? [];
+            updatedNodes = updatedNodes.map((n) =>
+              n.id === targetNode.id
+                ? { ...n, data: { ...n.data, agents: agents.filter((a: any) => a.id !== sourceNode.id) } }
+                : n,
+            );
+          }
+
+          // Tool removed from Agent → remove from tools array
+          if (sourceType === 'tool' && targetType === 'agent') {
+            const tools = ((targetData.tools as string[]) ?? []);
+            updatedNodes = updatedNodes.map((n) =>
+              n.id === targetNode.id
+                ? { ...n, data: { ...n.data, tools: tools.filter((t) => t !== sourceNode.id) } }
+                : n,
+            );
+          }
+
+          // Memory removed from Agent → clear memoryConfig
+          if (sourceType === 'memory' && targetType === 'agent') {
+            updatedNodes = updatedNodes.map((n) =>
+              n.id === targetNode.id
+                ? { ...n, data: { ...n.data, memoryConfig: undefined } }
+                : n,
+            );
+          }
+        }
+
+        if (removals.length > 0 && removedEdges.length > 0) {
+          set(() => {
+            const nextEdges = applyEdgeChanges(changes, state.edges) as CanvasEdge[];
+            return {
+              nodes: updatedNodes as CanvasNode[],
+              edges: nextEdges,
+              selectedEdgeIds: nextEdges.filter((e) => e.selected).map((e) => e.id),
+              isDirty: true,
+            };
+          });
+          return;
+        }
+      }
+
+      set((s) => {
+        const nextEdges = applyEdgeChanges(changes, s.edges) as CanvasEdge[];
 
         const selectedEdgeIds = nextEdges
           .filter((e) => e.selected)
@@ -325,7 +387,7 @@ export const useCanvasStore = create<CanvasState>()(
         return {
           edges: nextEdges,
           selectedEdgeIds,
-          isDirty: state.isDirty || hasMutations,
+          isDirty: s.isDirty || hasMutations,
         };
       });
     },
@@ -337,14 +399,82 @@ export const useCanvasStore = create<CanvasState>()(
       const edgeId = generateEdgeId();
       const newEdge: CanvasEdge = {
         id: edgeId,
-        type: 'data',
+        type: 'smoothstep',
         source: connection.source,
         target: connection.target,
         sourceHandle: connection.sourceHandle,
         targetHandle: connection.targetHandle,
       };
 
+      // Look up source and target nodes for semantic wiring
+      const sourceNode = state.nodes.find((n) => n.id === connection.source);
+      const targetNode = state.nodes.find((n) => n.id === connection.target);
+      const sourceType = sourceNode?.type;
+      const targetType = targetNode?.type;
+
+      let updatedNodes: CanvasNode[] | null = null;
+
+      // Agent → Team: add agent to team's agents array
+      if (sourceType === 'agent' && targetType === 'team' && sourceNode && targetNode) {
+        const sourceData = sourceNode.data as Record<string, unknown>;
+        const targetData = targetNode.data as Record<string, unknown>;
+        const existingAgents = ((targetData.agents as any[]) ?? []);
+        const alreadyAdded = existingAgents.some((a: any) => a.id === sourceNode.id);
+        if (!alreadyAdded) {
+          const agentEntry = {
+            id: sourceNode.id,
+            role: (sourceData.label as string) ?? 'Agent',
+            agentConfig: {
+              label: sourceData.label ?? 'Agent',
+              model: sourceData.model ?? '',
+              systemPrompt: sourceData.systemPrompt ?? '',
+              temperature: sourceData.temperature ?? 0.7,
+              maxTokens: sourceData.maxTokens ?? 4096,
+              tools: sourceData.tools ?? [],
+            },
+          };
+          updatedNodes = state.nodes.map((n) =>
+            n.id === targetNode.id
+              ? { ...n, data: { ...n.data, agents: [...existingAgents, agentEntry] } }
+              : n,
+          );
+        }
+      }
+
+      // Tool → Agent: add tool node ID to agent's tools array
+      if (sourceType === 'tool' && targetType === 'agent' && sourceNode && targetNode) {
+        const targetData = targetNode.data as Record<string, unknown>;
+        const existingTools = ((targetData.tools as string[]) ?? []);
+        if (!existingTools.includes(sourceNode.id)) {
+          updatedNodes = state.nodes.map((n) =>
+            n.id === targetNode.id
+              ? { ...n, data: { ...n.data, tools: [...existingTools, sourceNode.id] } }
+              : n,
+          );
+        }
+      }
+
+      // Memory → Agent: set agent's memoryConfig
+      if (sourceType === 'memory' && targetType === 'agent' && sourceNode && targetNode) {
+        const sourceData = sourceNode.data as Record<string, unknown>;
+        updatedNodes = state.nodes.map((n) =>
+          n.id === targetNode.id
+            ? {
+                ...n,
+                data: {
+                  ...n.data,
+                  memoryConfig: {
+                    type: sourceData.memoryType ?? 'conversation',
+                    memoryNodeId: sourceNode.id,
+                  },
+                },
+              }
+            : n,
+        );
+      }
+
       set((s) => ({
+        ...(updatedNodes ? { nodes: updatedNodes } : {}),
         edges: [...s.edges, newEdge],
         isDirty: true,
       }));

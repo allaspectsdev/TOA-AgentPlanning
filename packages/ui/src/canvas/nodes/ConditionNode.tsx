@@ -37,7 +37,7 @@ export function ConditionNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={GitBranch}
       label={nodeData.label}
-      color="bg-sky-500"
+      color="#0ea5e9"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

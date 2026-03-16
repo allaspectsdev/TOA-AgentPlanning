@@ -26,7 +26,7 @@ export function MemoryNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={Database}
       label={nodeData.label}
-      color="bg-teal-500"
+      color="#14b8a6"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

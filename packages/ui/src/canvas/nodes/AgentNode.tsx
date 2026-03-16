@@ -16,7 +16,7 @@ export function AgentNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={Brain}
       label={nodeData.label}
-      color="bg-violet-500"
+      color="#8b5cf6"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

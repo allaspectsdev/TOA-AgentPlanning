@@ -11,7 +11,7 @@ export interface NodeRegistryEntry {
   category: 'triggers' | 'agents' | 'logic' | 'tools' | 'memory' | 'output' | 'other';
   /** Lucide icon name (camelCase). */
   icon: string;
-  /** Tailwind colour class used for the node header. */
+  /** Hex color for the node header/accent. */
   color: string;
   /** Default input/output ports when a node is first created. */
   defaultPorts: { inputs: Port[]; outputs: Port[] };
@@ -25,7 +25,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Agent',
     category: 'agents',
     icon: 'Bot',
-    color: 'bg-violet-500',
+    color: '#8b5cf6',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [{ id: 'output', type: 'output', label: 'Output', dataType: 'any' }],
@@ -37,7 +37,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Team',
     category: 'agents',
     icon: 'Users',
-    color: 'bg-indigo-500',
+    color: '#6366f1',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [{ id: 'output', type: 'output', label: 'Output', dataType: 'any' }],
@@ -49,7 +49,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Trigger',
     category: 'triggers',
     icon: 'Zap',
-    color: 'bg-amber-500',
+    color: '#f59e0b',
     defaultPorts: {
       inputs: [],
       outputs: [{ id: 'output', type: 'output', label: 'Output', dataType: 'any' }],
@@ -61,7 +61,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Gate',
     category: 'logic',
     icon: 'ShieldCheck',
-    color: 'bg-orange-500',
+    color: '#f97316',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [
@@ -76,7 +76,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Condition',
     category: 'logic',
     icon: 'GitBranch',
-    color: 'bg-cyan-500',
+    color: '#06b6d4',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [
@@ -91,7 +91,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Tool',
     category: 'tools',
     icon: 'Wrench',
-    color: 'bg-emerald-500',
+    color: '#10b981',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [{ id: 'output', type: 'output', label: 'Output', dataType: 'any' }],
@@ -103,7 +103,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Memory',
     category: 'memory',
     icon: 'Database',
-    color: 'bg-pink-500',
+    color: '#ec4899',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [{ id: 'output', type: 'output', label: 'Output', dataType: 'any' }],
@@ -115,7 +115,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Output',
     category: 'output',
     icon: 'Send',
-    color: 'bg-blue-500',
+    color: '#3b82f6',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [],
@@ -127,7 +127,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Subflow',
     category: 'logic',
     icon: 'Workflow',
-    color: 'bg-teal-500',
+    color: '#14b8a6',
     defaultPorts: {
       inputs: [{ id: 'input', type: 'input', label: 'Input', dataType: 'any' }],
       outputs: [{ id: 'output', type: 'output', label: 'Output', dataType: 'any' }],
@@ -139,7 +139,7 @@ export const NODE_REGISTRY: Record<NodeType, NodeRegistryEntry> = {
     label: 'Note',
     category: 'other',
     icon: 'StickyNote',
-    color: 'bg-gray-400',
+    color: '#9ca3af',
     defaultPorts: {
       inputs: [],
       outputs: [],

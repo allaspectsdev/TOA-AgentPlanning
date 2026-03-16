@@ -20,7 +20,7 @@ export function OutputNode({ data, selected }: NodeProps) {
     <NodeShell
       icon={ArrowRightFromLine}
       label={nodeData.label}
-      color="bg-rose-500"
+      color="#f43f5e"
       status={nodeData.status}
       selected={selected}
       disabled={nodeData.disabled}

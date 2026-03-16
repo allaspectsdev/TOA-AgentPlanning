@@ -83,7 +83,10 @@ function WorkflowNodeComponent({ data, type, selected, id }: NodeProps<Node>) {
       ))}
 
       {/* Header */}
-      <div className={`workflow-node-header ${registry.color}`}>
+      <div
+        className="workflow-node-header"
+        style={{ backgroundColor: registry.color }}
+      >
         {Icon && <Icon className="h-3.5 w-3.5" />}
         <span className="truncate">{label}</span>
       </div>
@@ -149,11 +152,21 @@ const nodeTypes: NodeTypes = {
   note: WorkflowNodeComponent,
 };
 
-const edgeTypes: EdgeTypes = {};
+const edgeTypes: EdgeTypes = {
+  // Custom edge types can be registered here when needed:
+  // data: DataEdge,
+  // conditional: ConditionalEdge,
+};
 
 const defaultEdgeOptions: DefaultEdgeOptions = {
   type: 'smoothstep',
   animated: false,
+  style: { strokeWidth: 2 },
+};
+
+const connectionLineStyle = {
+  strokeWidth: 2,
+  strokeDasharray: '6 3',
 };
 
 // ---------------------------------------------------------------------------
@@ -244,6 +257,7 @@ export function Canvas() {
         edgeTypes={edgeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         isValidConnection={isValidConnection}
+        connectionLineStyle={connectionLineStyle}
         onMoveEnd={(_event: MouseEvent | TouchEvent | null, viewport: Viewport) =>
           setViewport({
             x: viewport.x,
