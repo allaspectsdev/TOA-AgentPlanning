@@ -7,28 +7,33 @@ async function handler(req: NextRequest) {
   const authPath = url.pathname; // /api/auth/...
   const target = `${API_URL}${authPath}${url.search}`;
 
-  const headers = new Headers(req.headers);
-  headers.delete('host');
+  const headers = new Headers();
+  // Forward essential headers
+  const contentType = req.headers.get('content-type');
+  if (contentType) headers.set('content-type', contentType);
+
+  // Forward cookies from browser → API
+  const cookie = req.headers.get('cookie');
+  if (cookie) headers.set('cookie', cookie);
+
+  // Better-Auth requires Origin header
+  headers.set('origin', API_URL);
 
   const res = await fetch(target, {
     method: req.method,
     headers,
     body: req.method !== 'GET' && req.method !== 'HEAD' ? await req.text() : undefined,
+    redirect: 'manual',
   });
 
   const body = await res.text();
   const responseHeaders = new Headers();
   res.headers.forEach((value, key) => {
-    if (key.toLowerCase() !== 'transfer-encoding') {
-      responseHeaders.set(key, value);
+    const k = key.toLowerCase();
+    if (k !== 'transfer-encoding' && k !== 'connection') {
+      responseHeaders.append(key, value);
     }
   });
-
-  // Forward Set-Cookie headers so auth cookies are set on the Next.js domain
-  const cookies = res.headers.getSetCookie?.() ?? [];
-  for (const cookie of cookies) {
-    responseHeaders.append('set-cookie', cookie);
-  }
 
   return new NextResponse(body, {
     status: res.status,

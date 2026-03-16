@@ -50,7 +50,13 @@ export async function createContext(
       if (key) acc[key] = val.join('=');
       return acc;
     }, {});
-    token = cookies['better-auth.session_token'];
+    let rawToken = cookies['better-auth.session_token'];
+    // URL-decode the cookie value and strip the .signature suffix
+    if (rawToken) {
+      rawToken = decodeURIComponent(rawToken);
+      const dotIdx = rawToken.indexOf('.');
+      token = dotIdx !== -1 ? rawToken.slice(0, dotIdx) : rawToken;
+    }
   }
 
   // 2. Fall back to Authorization header (API clients)
