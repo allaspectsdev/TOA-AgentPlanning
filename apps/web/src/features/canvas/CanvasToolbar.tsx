@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useReactFlow } from '@xyflow/react';
 import {
   Undo2,
@@ -38,6 +38,8 @@ export function CanvasToolbar({
     useCanvas();
   const reactFlowInstance = useReactFlow();
 
+  const [validationMsg, setValidationMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   const handleZoomIn = useCallback(() => {
     reactFlowInstance.zoomIn({ duration: 200 });
   }, [reactFlowInstance]);
@@ -49,11 +51,11 @@ export function CanvasToolbar({
   const handleValidate = useCallback(() => {
     const errors = validate();
     if (errors.length === 0) {
-      // TODO: Show toast notification
-      console.info('Workflow is valid');
+      setValidationMsg({ type: 'success', text: 'Workflow is valid' });
     } else {
-      console.warn('Validation errors:', errors);
+      setValidationMsg({ type: 'error', text: `${errors.length} issue${errors.length > 1 ? 's' : ''} found` });
     }
+    setTimeout(() => setValidationMsg(null), 3000);
   }, [validate]);
 
   return (
@@ -125,6 +127,19 @@ export function CanvasToolbar({
         >
           <AlertCircle className="h-4 w-4" />
         </button>
+
+        {/* Validation message badge */}
+        {validationMsg && (
+          <span
+            className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
+              validationMsg.type === 'success'
+                ? 'bg-green-500/15 text-green-400'
+                : 'bg-red-500/15 text-red-400'
+            }`}
+          >
+            {validationMsg.text}
+          </span>
+        )}
       </div>
 
       {/* Right: Actions */}

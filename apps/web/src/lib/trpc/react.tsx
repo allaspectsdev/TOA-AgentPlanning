@@ -28,7 +28,7 @@ const _trpc = createTRPCReact<AppRouter>() as any;
 export const trpc: any = _trpc;
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000/trpc';
+  (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002') + '/trpc';
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [

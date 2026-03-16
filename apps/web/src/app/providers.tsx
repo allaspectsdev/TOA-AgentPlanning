@@ -3,7 +3,12 @@
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactFlowProvider } from '@xyflow/react';
-import { trpc, trpcClient } from '@/lib/trpc/react';
+import { httpBatchLink } from '@trpc/client';
+import superjson from 'superjson';
+import { trpc } from '@/lib/trpc/react';
+
+const API_URL =
+  (process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002') + '/trpc';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -16,6 +21,28 @@ export function Providers({ children }: { children: React.ReactNode }) {
           },
         },
       }),
+  );
+
+  const [trpcClient] = useState(() =>
+    trpc.createClient({
+      links: [
+        httpBatchLink({
+          url: API_URL,
+          transformer: superjson,
+          headers() {
+            return {
+              'x-trpc-source': 'web-react',
+            };
+          },
+          fetch(url: any, options: any) {
+            return fetch(url, {
+              ...options,
+              credentials: 'include',
+            });
+          },
+        }),
+      ],
+    }),
   );
 
   return (

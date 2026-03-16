@@ -151,29 +151,49 @@ function NodePalette() {
 interface EditorLayoutProps {
   projectId: string;
   workflowId: string;
+  workflowName?: string;
+  isSaving?: boolean;
+  onSave?: () => void;
+  onRun?: () => void;
 }
 
-export function EditorLayout({ projectId, workflowId }: EditorLayoutProps) {
+export function EditorLayout({
+  projectId,
+  workflowId,
+  workflowName,
+  isSaving: isSavingProp,
+  onSave: onSaveProp,
+  onRun: onRunProp,
+}: EditorLayoutProps) {
   const leftPanelOpen = useUIStore((s) => s.leftPanelOpen);
   const rightPanelOpen = useUIStore((s) => s.rightPanelOpen);
   const toggleLeftPanel = useUIStore((s) => s.toggleLeftPanel);
   const toggleRightPanel = useUIStore((s) => s.toggleRightPanel);
   const selectedNodeIds = useCanvasStore((s) => s.selectedNodeIds);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSavingLocal, setIsSavingLocal] = useState(false);
+
+  const isSaving = isSavingProp ?? isSavingLocal;
 
   const handleSave = useCallback(async () => {
-    setIsSaving(true);
+    if (onSaveProp) {
+      onSaveProp();
+      return;
+    }
+    setIsSavingLocal(true);
     const definition = useCanvasStore.getState().getDefinition();
-    // TODO: Save via tRPC mutation
+    // Fallback: no-op save
     await new Promise((r) => setTimeout(r, 500));
     useCanvasStore.getState().markSaved();
-    setIsSaving(false);
-  }, []);
+    setIsSavingLocal(false);
+  }, [onSaveProp]);
 
   const handleRun = useCallback(async () => {
-    // TODO: Trigger execution via tRPC mutation and navigate to run page
+    if (onRunProp) {
+      onRunProp();
+      return;
+    }
     console.info('Run workflow');
-  }, []);
+  }, [onRunProp]);
 
   // Show right panel when a node is selected
   const showRightPanel = rightPanelOpen && selectedNodeIds.length === 1;
@@ -182,7 +202,7 @@ export function EditorLayout({ projectId, workflowId }: EditorLayoutProps) {
     <div className="flex h-full flex-col">
       {/* Toolbar */}
       <CanvasToolbar
-        workflowName="Untitled Workflow"
+        workflowName={workflowName ?? 'Untitled Workflow'}
         projectId={projectId}
         workflowId={workflowId}
         isSaving={isSaving}

@@ -12,7 +12,9 @@ import {
   User,
   Workflow,
   Filter,
+  Loader2,
 } from 'lucide-react';
+import { trpc } from '@/lib/trpc/react';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -36,7 +38,7 @@ interface Approval {
 }
 
 // ---------------------------------------------------------------------------
-// Sample data
+// Sample / fallback data
 // ---------------------------------------------------------------------------
 
 const SAMPLE_APPROVALS: Approval[] = [
@@ -143,6 +145,24 @@ function timeRemaining(dateStr: string): string {
   return `${days}d left`;
 }
 
+/** Map API GateApproval to our Approval shape */
+function mapApiApproval(a: any): Approval {
+  return {
+    id: a.id,
+    gateType: a.gateType ?? a.payload?.gateType ?? 'approval',
+    status: (a.status ?? 'pending') as GateStatus,
+    workflowName: a.workflowName ?? a.payload?.workflowName ?? 'Workflow',
+    workflowId: a.workflowId ?? a.payload?.workflowId ?? '',
+    executionId: a.executionId ?? '',
+    nodeName: a.nodeName ?? a.gateNodeId ?? a.stepId ?? 'Gate',
+    assignedTo: a.assignedTo ?? 'You',
+    createdAt: a.createdAt ?? new Date().toISOString(),
+    timeoutAt: a.timeoutAt ?? new Date().toISOString(),
+    reviewInstructions: a.reviewInstructions ?? a.payload?.reviewInstructions,
+    contextPreview: a.contextPreview ?? a.payload?.contextPreview,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -152,15 +172,66 @@ type FilterTab = 'pending' | 'all' | 'resolved';
 export default function ApprovalsPage() {
   const [activeTab, setActiveTab] = useState<FilterTab>('pending');
 
-  const filtered = SAMPLE_APPROVALS.filter((a) => {
+  // --- tRPC: fetch pending approvals ---
+  const utils = trpc.useUtils();
+  const { data: pendingApprovals, isLoading: loadingPending, error: pendingError } = trpc.gate.getPending.useQuery(undefined, {
+    retry: false,
+  });
+
+  // --- tRPC: approve & reject mutations ---
+  const approveMutation = trpc.gate.approve.useMutation({
+    onSuccess: () => {
+      utils.gate.getPending.invalidate();
+    },
+    onError: (err: any) => {
+      alert(`Failed to approve: ${err.message}`);
+    },
+  });
+
+  const rejectMutation = trpc.gate.reject.useMutation({
+    onSuccess: () => {
+      utils.gate.getPending.invalidate();
+    },
+    onError: (err: any) => {
+      alert(`Failed to reject: ${err.message}`);
+    },
+  });
+
+  // Use API data if available, otherwise fall back to sample data
+  const apiApprovals: Approval[] = pendingApprovals
+    ? (pendingApprovals as any[]).map(mapApiApproval)
+    : [];
+
+  const allApprovals = apiApprovals.length > 0 || (!pendingError && !loadingPending)
+    ? apiApprovals
+    : SAMPLE_APPROVALS;
+
+  const filtered = allApprovals.filter((a) => {
     if (activeTab === 'pending') return a.status === 'pending' || a.status === 'escalated';
     if (activeTab === 'resolved') return a.status === 'approved' || a.status === 'rejected' || a.status === 'timed_out';
     return true;
   });
 
-  const pendingCount = SAMPLE_APPROVALS.filter(
+  const pendingCount = allApprovals.filter(
     (a) => a.status === 'pending' || a.status === 'escalated',
   ).length;
+
+  // --- Handlers ---
+  function handleApprove(approval: Approval) {
+    approveMutation.mutate({ approvalId: approval.id });
+  }
+
+  function handleReject(approval: Approval) {
+    const reason = prompt('Rejection reason (optional):');
+    rejectMutation.mutate({ approvalId: approval.id, reason: reason ?? undefined });
+  }
+
+  function handleViewDetails(approval: Approval) {
+    if (approval.executionId) {
+      // Navigate to execution; we may not have projectId/workflowId from the approval data
+      alert(`Execution details: ${approval.executionId}\n\nFull navigation requires project and workflow context which is not available from the approval object.`);
+    }
+  }
 
   return (
     <div className="p-6 lg:p-8 space-y-6">
@@ -180,12 +251,27 @@ export default function ApprovalsPage() {
         </p>
       </div>
 
+      {/* Loading state */}
+      {loadingPending && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading approvals...
+        </div>
+      )}
+
+      {/* Fallback notice */}
+      {pendingError && !loadingPending && (
+        <div className="rounded-md bg-muted/50 border border-border px-4 py-2 text-xs text-muted-foreground">
+          Could not load approvals from API. Showing sample data.
+        </div>
+      )}
+
       {/* Filter Tabs */}
       <div className="flex items-center gap-1 border-b border-border">
         {([
           { id: 'pending' as const, label: 'Needs Action', count: pendingCount },
-          { id: 'all' as const, label: 'All', count: SAMPLE_APPROVALS.length },
-          { id: 'resolved' as const, label: 'Resolved', count: SAMPLE_APPROVALS.length - pendingCount },
+          { id: 'all' as const, label: 'All', count: allApprovals.length },
+          { id: 'resolved' as const, label: 'Resolved', count: allApprovals.length - pendingCount },
         ]).map((tab) => (
           <button
             key={tab.id}
@@ -213,6 +299,9 @@ export default function ApprovalsPage() {
           const config = statusConfig[approval.status];
           const StatusIcon = config.icon;
           const isPending = approval.status === 'pending' || approval.status === 'escalated';
+          const isMutating =
+            (approveMutation.isPending && approveMutation.variables?.approvalId === approval.id) ||
+            (rejectMutation.isPending && rejectMutation.variables?.approvalId === approval.id);
 
           return (
             <div
@@ -273,15 +362,34 @@ export default function ApprovalsPage() {
                   {/* Action buttons */}
                   {isPending && (
                     <div className="mt-3 flex items-center gap-2">
-                      <button className="inline-flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-green-700 transition-colors">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
+                      <button
+                        onClick={() => handleApprove(approval)}
+                        disabled={isMutating}
+                        className="inline-flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-green-700 transition-colors disabled:opacity-50"
+                      >
+                        {approveMutation.isPending && approveMutation.variables?.approvalId === approval.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        )}
                         Approve
                       </button>
-                      <button className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent transition-colors">
-                        <XCircle className="h-3.5 w-3.5" />
+                      <button
+                        onClick={() => handleReject(approval)}
+                        disabled={isMutating}
+                        className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent transition-colors disabled:opacity-50"
+                      >
+                        {rejectMutation.isPending && rejectMutation.variables?.approvalId === approval.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <XCircle className="h-3.5 w-3.5" />
+                        )}
                         Reject
                       </button>
-                      <button className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
+                      <button
+                        onClick={() => handleViewDetails(approval)}
+                        className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                      >
                         View Details
                         <ChevronRight className="h-3 w-3" />
                       </button>
@@ -294,7 +402,7 @@ export default function ApprovalsPage() {
         })}
       </div>
 
-      {filtered.length === 0 && (
+      {filtered.length === 0 && !loadingPending && (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <CheckCircle2 className="h-10 w-10 text-green-500/30" />
           <p className="mt-3 text-sm font-medium text-foreground">

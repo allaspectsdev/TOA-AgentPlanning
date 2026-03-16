@@ -8,7 +8,9 @@ import {
   Workflow,
   X,
   Loader2,
+  AlertCircle,
 } from 'lucide-react';
+import { trpc } from '@/lib/trpc/react';
 
 interface Project {
   id: string;
@@ -17,31 +19,6 @@ interface Project {
   workflowCount: number;
   updatedAt: string;
 }
-
-/** Placeholder project data for initial rendering. */
-const PLACEHOLDER_PROJECTS: Project[] = [
-  {
-    id: 'proj_demo_1',
-    name: 'Customer Support',
-    description: 'Automated customer support triage and response workflows',
-    workflowCount: 3,
-    updatedAt: '2026-03-15T10:30:00Z',
-  },
-  {
-    id: 'proj_demo_2',
-    name: 'Data Pipeline',
-    description: 'ETL and data transformation agent workflows',
-    workflowCount: 5,
-    updatedAt: '2026-03-14T16:45:00Z',
-  },
-  {
-    id: 'proj_demo_3',
-    name: 'Content Generation',
-    description: 'Multi-agent content creation and review',
-    workflowCount: 2,
-    updatedAt: '2026-03-12T09:00:00Z',
-  },
-];
 
 function CreateProjectDialog({
   open,
@@ -52,17 +29,22 @@ function CreateProjectDialog({
 }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+
+  const utils = trpc.useUtils();
+  const createProject = trpc.project.create.useMutation({
+    onSuccess: () => {
+      utils.project.list.invalidate();
+      setName('');
+      setDescription('');
+      onClose();
+    },
+  });
 
   if (!open) return null;
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    setIsCreating(true);
-    // TODO: call trpc mutation
-    await new Promise((r) => setTimeout(r, 500));
-    setIsCreating(false);
-    onClose();
+    createProject.mutate({ name: name.trim(), description: description.trim() || undefined });
   }
 
   return (
@@ -108,6 +90,12 @@ function CreateProjectDialog({
             />
           </div>
 
+          {createProject.error && (
+            <p className="text-sm text-destructive">
+              Failed to create project. Please try again.
+            </p>
+          )}
+
           <div className="flex justify-end gap-2">
             <button
               type="button"
@@ -118,10 +106,10 @@ function CreateProjectDialog({
             </button>
             <button
               type="submit"
-              disabled={isCreating || !name.trim()}
+              disabled={createProject.isPending || !name.trim()}
               className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
             >
-              {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
+              {createProject.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Create
             </button>
           </div>
@@ -132,11 +120,13 @@ function CreateProjectDialog({
 }
 
 function ProjectCard({ project }: { project: Project }) {
-  const updatedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
+  const updatedDate = project.updatedAt
+    ? new Date(project.updatedAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      })
+    : '';
 
   return (
     <Link
@@ -163,9 +153,9 @@ function ProjectCard({ project }: { project: Project }) {
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Workflow className="h-3 w-3" />
-          {project.workflowCount} workflow{project.workflowCount !== 1 ? 's' : ''}
+          {project.workflowCount ?? 0} workflow{project.workflowCount !== 1 ? 's' : ''}
         </span>
-        <span>Updated {updatedDate}</span>
+        {updatedDate && <span>Updated {updatedDate}</span>}
       </div>
     </Link>
   );
@@ -173,7 +163,7 @@ function ProjectCard({ project }: { project: Project }) {
 
 export default function ProjectsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const projects = PLACEHOLDER_PROJECTS;
+  const { data: projects, isLoading, error } = trpc.project.list.useQuery();
 
   return (
     <div className="p-6">
@@ -193,11 +183,46 @@ export default function ProjectsPage() {
         </button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
-      </div>
+      {isLoading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      )}
+
+      {error && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <AlertCircle className="mb-3 h-8 w-8 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-foreground">Unable to load projects</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {error.message || 'Something went wrong. Please try again.'}
+          </p>
+        </div>
+      )}
+
+      {!isLoading && !error && projects?.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <FolderKanban className="mb-3 h-10 w-10 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-foreground">No projects yet</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Create your first project to get started with agent workflows.
+          </p>
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="mt-4 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+          >
+            <Plus className="h-4 w-4" />
+            New Project
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !error && projects && projects.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project: Project) => (
+            <ProjectCard key={project.id} project={project} />
+          ))}
+        </div>
+      )}
 
       <CreateProjectDialog
         open={dialogOpen}

@@ -12,8 +12,10 @@ import {
   Pencil,
   Globe,
   FileText,
+  AlertCircle,
 } from 'lucide-react';
 import type { WorkflowStatus } from '@toa/shared';
+import { trpc } from '@/lib/trpc/react';
 
 interface WorkflowSummary {
   id: string;
@@ -46,33 +48,6 @@ const STATUS_BADGES: Record<
   },
 };
 
-const PLACEHOLDER_WORKFLOWS: WorkflowSummary[] = [
-  {
-    id: 'wf_demo_1',
-    name: 'Ticket Triage',
-    description: 'Classify and route incoming support tickets',
-    status: 'published',
-    currentVersion: 3,
-    updatedAt: '2026-03-15T10:30:00Z',
-  },
-  {
-    id: 'wf_demo_2',
-    name: 'Response Generator',
-    description: 'Generate draft responses using a team of specialist agents',
-    status: 'draft',
-    currentVersion: 1,
-    updatedAt: '2026-03-14T08:20:00Z',
-  },
-  {
-    id: 'wf_demo_3',
-    name: 'Escalation Handler',
-    description: 'Handle escalated tickets with human-in-the-loop approval',
-    status: 'draft',
-    currentVersion: 1,
-    updatedAt: '2026-03-13T14:00:00Z',
-  },
-];
-
 const STATUS_ICONS: Record<WorkflowStatus, typeof Pencil> = {
   draft: Pencil,
   published: Globe,
@@ -91,17 +66,26 @@ function CreateWorkflowDialog({
 }) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+
+  const utils = trpc.useUtils();
+  const createWorkflow = trpc.workflow.create.useMutation({
+    onSuccess: () => {
+      utils.workflow.list.invalidate();
+      setName('');
+      setDescription('');
+      onClose();
+    },
+  });
 
   if (!open) return null;
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    setIsCreating(true);
-    // TODO: call trpc mutation to create workflow
-    await new Promise((r) => setTimeout(r, 500));
-    setIsCreating(false);
-    onClose();
+    createWorkflow.mutate({
+      projectId,
+      name: name.trim(),
+      description: description.trim() || undefined,
+    });
   }
 
   return (
@@ -147,6 +131,12 @@ function CreateWorkflowDialog({
             />
           </div>
 
+          {createWorkflow.error && (
+            <p className="text-sm text-destructive">
+              Failed to create workflow. Please try again.
+            </p>
+          )}
+
           <div className="flex justify-end gap-2">
             <button
               type="button"
@@ -157,10 +147,10 @@ function CreateWorkflowDialog({
             </button>
             <button
               type="submit"
-              disabled={isCreating || !name.trim()}
+              disabled={createWorkflow.isPending || !name.trim()}
               className="inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
             >
-              {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
+              {createWorkflow.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Create
             </button>
           </div>
@@ -177,12 +167,14 @@ function WorkflowCard({
   workflow: WorkflowSummary;
   projectId: string;
 }) {
-  const badge = STATUS_BADGES[workflow.status];
-  const StatusIcon = STATUS_ICONS[workflow.status];
-  const updatedDate = new Date(workflow.updatedAt).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
+  const badge = STATUS_BADGES[workflow.status] ?? STATUS_BADGES.draft;
+  const StatusIcon = STATUS_ICONS[workflow.status] ?? Pencil;
+  const updatedDate = workflow.updatedAt
+    ? new Date(workflow.updatedAt).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+      })
+    : '';
 
   return (
     <Link
@@ -199,7 +191,7 @@ function WorkflowCard({
               {workflow.name}
             </h3>
             <span className="text-xs text-muted-foreground">
-              v{workflow.currentVersion}
+              v{workflow.currentVersion ?? 1}
             </span>
           </div>
         </div>
@@ -217,9 +209,11 @@ function WorkflowCard({
         </p>
       )}
 
-      <div className="text-xs text-muted-foreground">
-        Last edited {updatedDate}
-      </div>
+      {updatedDate && (
+        <div className="text-xs text-muted-foreground">
+          Last edited {updatedDate}
+        </div>
+      )}
     </Link>
   );
 }
@@ -228,7 +222,7 @@ export default function WorkflowsPage() {
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
   const [dialogOpen, setDialogOpen] = useState(false);
-  const workflows = PLACEHOLDER_WORKFLOWS;
+  const { data: workflows, isLoading, error } = trpc.workflow.list.useQuery({ projectId });
 
   return (
     <div className="p-6">
@@ -257,11 +251,46 @@ export default function WorkflowsPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {workflows.map((wf) => (
-          <WorkflowCard key={wf.id} workflow={wf} projectId={projectId} />
-        ))}
-      </div>
+      {isLoading && (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      )}
+
+      {error && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <AlertCircle className="mb-3 h-8 w-8 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-foreground">Unable to load workflows</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {error.message || 'Something went wrong. Please try again.'}
+          </p>
+        </div>
+      )}
+
+      {!isLoading && !error && workflows?.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Workflow className="mb-3 h-10 w-10 text-muted-foreground" />
+          <h3 className="text-sm font-medium text-foreground">No workflows yet</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Create your first workflow to start building agent teams.
+          </p>
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="mt-4 inline-flex h-9 items-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
+          >
+            <Plus className="h-4 w-4" />
+            New Workflow
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !error && workflows && workflows.length > 0 && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {workflows.map((wf: WorkflowSummary) => (
+            <WorkflowCard key={wf.id} workflow={wf} projectId={projectId} />
+          ))}
+        </div>
+      )}
 
       <CreateWorkflowDialog
         open={dialogOpen}

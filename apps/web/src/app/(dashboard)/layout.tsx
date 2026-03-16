@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -22,7 +22,15 @@ const NAV_ITEMS = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ] as const;
 
-function Sidebar({ className }: { className?: string }) {
+function Sidebar({
+  className,
+  user,
+  onLogout,
+}: {
+  className?: string;
+  user: { id: string; name: string; email: string } | null;
+  onLogout: () => void;
+}) {
   const pathname = usePathname();
 
   return (
@@ -64,11 +72,14 @@ function Sidebar({ className }: { className?: string }) {
 
       {/* User section */}
       <div className="border-t border-sidebar-border p-3">
-        <button className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-active/50 hover:text-sidebar-active-foreground">
+        <button
+          onClick={onLogout}
+          className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-sidebar-foreground transition-colors hover:bg-sidebar-active/50 hover:text-sidebar-active-foreground"
+        >
           <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium text-foreground">
-            U
+            {user?.name?.[0]?.toUpperCase() ?? 'U'}
           </div>
-          <span className="flex-1 truncate text-left">User</span>
+          <span className="flex-1 truncate text-left">{user?.name ?? 'User'}</span>
           <LogOut className="h-3.5 w-3.5 shrink-0 opacity-60" />
         </button>
       </div>
@@ -78,10 +89,14 @@ function Sidebar({ className }: { className?: string }) {
 
 function TopBar({
   onToggleMobileSidebar,
+  user,
 }: {
   onToggleMobileSidebar: () => void;
+  user: { id: string; name: string; email: string } | null;
 }) {
   const [orgOpen, setOrgOpen] = useState(false);
+
+  const orgName = user?.name ? `${user.name}'s Organization` : 'My Organization';
 
   return (
     <header className="flex h-14 items-center justify-between border-b border-border bg-background px-4">
@@ -100,9 +115,9 @@ function TopBar({
           className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
           <div className="flex h-5 w-5 items-center justify-center rounded bg-primary text-[10px] font-bold text-primary-foreground">
-            O
+            {orgName[0]?.toUpperCase() ?? 'O'}
           </div>
-          My Organization
+          {orgName}
           <ChevronDown className="h-3.5 w-3.5 opacity-60" />
         </button>
 
@@ -118,9 +133,9 @@ function TopBar({
                 className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-popover-foreground hover:bg-accent"
               >
                 <div className="flex h-5 w-5 items-center justify-center rounded bg-primary text-[10px] font-bold text-primary-foreground">
-                  O
+                  {orgName[0]?.toUpperCase() ?? 'O'}
                 </div>
-                My Organization
+                {orgName}
               </button>
             </div>
           </>
@@ -143,11 +158,26 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [user, setUser] = useState<{ id: string; name: string; email: string } | null>(null);
+
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+    fetch(`${apiUrl}/api/auth/get-session`, { credentials: 'include' })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data?.user) setUser(data.user); })
+      .catch(() => {});
+  }, []);
+
+  async function handleLogout() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3002';
+    await fetch(`${apiUrl}/api/auth/sign-out`, { method: 'POST', credentials: 'include' });
+    window.location.href = '/login';
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Desktop sidebar */}
-      <Sidebar className="hidden lg:flex" />
+      <Sidebar className="hidden lg:flex" user={user} onLogout={handleLogout} />
 
       {/* Mobile sidebar overlay */}
       {mobileSidebarOpen && (
@@ -157,7 +187,7 @@ export default function DashboardLayout({
             onClick={() => setMobileSidebarOpen(false)}
           />
           <div className="relative z-10 h-full w-60">
-            <Sidebar />
+            <Sidebar user={user} onLogout={handleLogout} />
             <button
               onClick={() => setMobileSidebarOpen(false)}
               className="absolute right-2 top-3 rounded-md p-1 text-muted-foreground hover:text-foreground"
@@ -172,6 +202,7 @@ export default function DashboardLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <TopBar
           onToggleMobileSidebar={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+          user={user}
         />
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
