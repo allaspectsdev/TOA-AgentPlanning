@@ -5,6 +5,7 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { eq, and, desc, sql, like, isNull } from 'drizzle-orm';
+import { createId } from '@paralleldrive/cuid2';
 import { projects } from '@toa/db';
 import { createRouter, orgProcedure, requirePermission } from '../trpc';
 
@@ -17,28 +18,28 @@ const listInput = z.object({
   includeArchived: z.boolean().default(false),
   limit: z.number().int().min(1).max(100).default(20),
   offset: z.number().int().min(0).default(0),
-});
+}).optional().default({});
 
 const getInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 const createInput = z.object({
   name: z.string().min(1).max(128),
-  slug: z.string().min(1).max(128),
+  slug: z.string().min(1).max(128).optional(),
   description: z.string().max(2000).optional(),
   settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 const updateInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   name: z.string().min(1).max(128).optional(),
   description: z.string().max(2000).optional().nullable(),
   settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 const deleteInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 // ---------------------------------------------------------------------------
@@ -111,6 +112,8 @@ export const projectRouter = createRouter({
     .use(requirePermission('project', 'create'))
     .input(createInput)
     .mutation(async ({ ctx, input }) => {
+      const slug = input.slug ?? input.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').slice(0, 128);
+
       // Check for duplicate slug within the organization
       const [existing] = await ctx.db
         .select({ id: projects.id })
@@ -118,7 +121,7 @@ export const projectRouter = createRouter({
         .where(
           and(
             eq(projects.organizationId, ctx.organization.id),
-            eq(projects.slug, input.slug),
+            eq(projects.slug, slug),
           ),
         )
         .limit(1);
@@ -126,16 +129,17 @@ export const projectRouter = createRouter({
       if (existing) {
         throw new TRPCError({
           code: 'CONFLICT',
-          message: `A project with slug '${input.slug}' already exists in this organization.`,
+          message: `A project with slug '${slug}' already exists in this organization.`,
         });
       }
 
       const [project] = await ctx.db
         .insert(projects)
         .values({
+          id: createId(),
           organizationId: ctx.organization.id,
           name: input.name,
-          slug: input.slug,
+          slug,
           description: input.description,
           settings: input.settings ?? {},
         })

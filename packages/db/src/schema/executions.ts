@@ -1,7 +1,6 @@
 import {
   pgTable,
   pgEnum,
-  uuid,
   text,
   timestamp,
   integer,
@@ -53,11 +52,11 @@ export const logLevelEnum = pgEnum('log_level', [
 export const executions = pgTable(
   'executions',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    workflowId: uuid('workflow_id')
+    id: text('id').primaryKey(),
+    workflowId: text('workflow_id')
       .notNull()
       .references(() => workflows.id, { onDelete: 'cascade' }),
-    workflowVersionId: uuid('workflow_version_id')
+    workflowVersionId: text('workflow_version_id')
       .notNull()
       .references(() => workflowVersions.id, { onDelete: 'restrict' }),
     triggeredById: text('triggered_by_id').references(() => users.id, {
@@ -105,8 +104,8 @@ export const executionsRelations = relations(executions, ({ one, many }) => ({
 export const executionSteps = pgTable(
   'execution_steps',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    executionId: uuid('execution_id')
+    id: text('id').primaryKey(),
+    executionId: text('execution_id')
       .notNull()
       .references(() => executions.id, { onDelete: 'cascade' }),
     nodeId: text('node_id').notNull(),
@@ -124,7 +123,7 @@ export const executionSteps = pgTable(
       totalTokens: number;
     }>(),
     retryCount: integer('retry_count').notNull().default(0),
-    parentStepId: uuid('parent_step_id'),
+    parentStepId: text('parent_step_id'),
   },
   (table) => [
     index('exec_steps_execution_id_idx').on(table.executionId),
@@ -156,11 +155,11 @@ export const executionStepsRelations = relations(
 export const executionLogs = pgTable(
   'execution_logs',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    executionId: uuid('execution_id')
+    id: text('id').primaryKey(),
+    executionId: text('execution_id')
       .notNull()
       .references(() => executions.id, { onDelete: 'cascade' }),
-    stepId: uuid('step_id').references(() => executionSteps.id, {
+    stepId: text('step_id').references(() => executionSteps.id, {
       onDelete: 'cascade',
     }),
     level: logLevelEnum('level').notNull(),

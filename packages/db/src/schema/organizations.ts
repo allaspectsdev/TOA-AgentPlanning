@@ -1,7 +1,6 @@
 import {
   pgTable,
   pgEnum,
-  uuid,
   text,
   timestamp,
   uniqueIndex,
@@ -26,7 +25,7 @@ export const orgRoleEnum = pgEnum('org_role', [
 export const organizations = pgTable(
   'organizations',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
+    id: text('id').primaryKey(),
     name: text('name').notNull(),
     slug: text('slug').notNull(),
     plan: planEnum('plan').notNull().default('free'),
@@ -52,8 +51,8 @@ export const organizationsRelations = relations(organizations, ({ many }) => ({
 export const organizationMembers = pgTable(
   'organization_members',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id')
+    id: text('id').primaryKey(),
+    organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     userId: text('user_id')

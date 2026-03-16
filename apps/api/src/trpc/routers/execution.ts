@@ -20,24 +20,24 @@ import { createRouter, orgProcedure, requirePermission } from '../trpc';
 // ---------------------------------------------------------------------------
 
 const startInput = z.object({
-  workflowId: z.string().uuid(),
-  versionId: z.string().uuid().optional(),
+  workflowId: z.string().min(1),
+  versionId: z.string().min(1).optional(),
   input: z.record(z.string(), z.unknown()).default({}),
   triggerType: z.enum(['manual', 'api', 'schedule', 'webhook', 'event']).default('manual'),
   metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 const cancelInput = z.object({
-  executionId: z.string().uuid(),
+  executionId: z.string().min(1),
   reason: z.string().optional(),
 });
 
 const getInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 const listInput = z.object({
-  workflowId: z.string().uuid().optional(),
+  workflowId: z.string().min(1).optional(),
   status: z
     .enum(['pending', 'running', 'paused', 'completed', 'failed', 'cancelled', 'timed_out'])
     .optional(),
@@ -48,15 +48,15 @@ const listInput = z.object({
 });
 
 const getLogsInput = z.object({
-  executionId: z.string().uuid(),
-  stepId: z.string().uuid().optional(),
+  executionId: z.string().min(1),
+  stepId: z.string().min(1).optional(),
   level: z.enum(['debug', 'info', 'warn', 'error']).optional(),
   limit: z.number().int().min(1).max(500).default(100),
   offset: z.number().int().min(0).default(0),
 });
 
 const retryInput = z.object({
-  executionId: z.string().uuid(),
+  executionId: z.string().min(1),
   fromNodeId: z.string().optional(),
 });
 

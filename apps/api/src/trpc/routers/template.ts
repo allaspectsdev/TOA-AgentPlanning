@@ -20,11 +20,11 @@ const listWorkflowInput = z.object({
 });
 
 const getWorkflowInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 const createFromWorkflowInput = z.object({
-  workflowId: z.string().uuid(),
+  workflowId: z.string().min(1),
   name: z.string().min(1).max(128),
   description: z.string().min(1).max(2000),
   category: z.string().min(1).max(64),
@@ -33,8 +33,8 @@ const createFromWorkflowInput = z.object({
 });
 
 const instantiateInput = z.object({
-  templateId: z.string().uuid(),
-  projectId: z.string().uuid(),
+  templateId: z.string().min(1),
+  projectId: z.string().min(1),
   name: z.string().min(1).max(128),
   slug: z.string().min(1).max(128),
 });

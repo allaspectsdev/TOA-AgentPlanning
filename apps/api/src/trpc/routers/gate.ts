@@ -19,27 +19,27 @@ const getPendingInput = z.object({
 });
 
 const getForExecutionInput = z.object({
-  executionId: z.string().uuid(),
+  executionId: z.string().min(1),
 });
 
 const approveInput = z.object({
-  gateId: z.string().uuid(),
+  gateId: z.string().min(1),
   comment: z.string().max(2000).optional(),
 });
 
 const rejectInput = z.object({
-  gateId: z.string().uuid(),
+  gateId: z.string().min(1),
   comment: z.string().max(2000).optional(),
 });
 
 const submitInputInput = z.object({
-  gateId: z.string().uuid(),
+  gateId: z.string().min(1),
   data: z.record(z.string(), z.unknown()),
   comment: z.string().max(2000).optional(),
 });
 
 const escalateInput = z.object({
-  gateId: z.string().uuid(),
+  gateId: z.string().min(1),
   escalateTo: z.array(z.string().min(1)).min(1),
   reason: z.string().min(1).max(2000),
 });

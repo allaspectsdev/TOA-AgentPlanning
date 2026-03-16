@@ -25,8 +25,8 @@ CREATE TABLE "accounts" (
 );
 --> statement-breakpoint
 CREATE TABLE "agent_templates" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
 	"name" text NOT NULL,
 	"description" text,
 	"config" jsonb NOT NULL,
@@ -36,8 +36,8 @@ CREATE TABLE "agent_templates" (
 );
 --> statement-breakpoint
 CREATE TABLE "api_keys" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
 	"name" text NOT NULL,
 	"provider" "api_key_provider" NOT NULL,
 	"encrypted_key" text NOT NULL,
@@ -48,9 +48,9 @@ CREATE TABLE "api_keys" (
 );
 --> statement-breakpoint
 CREATE TABLE "execution_logs" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"execution_id" uuid NOT NULL,
-	"step_id" uuid,
+	"id" text PRIMARY KEY NOT NULL,
+	"execution_id" text NOT NULL,
+	"step_id" text,
 	"level" "log_level" NOT NULL,
 	"message" text NOT NULL,
 	"data" jsonb,
@@ -58,8 +58,8 @@ CREATE TABLE "execution_logs" (
 );
 --> statement-breakpoint
 CREATE TABLE "execution_steps" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"execution_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"execution_id" text NOT NULL,
 	"node_id" text NOT NULL,
 	"node_type" text NOT NULL,
 	"status" "step_status" DEFAULT 'pending' NOT NULL,
@@ -71,13 +71,13 @@ CREATE TABLE "execution_steps" (
 	"duration_ms" integer,
 	"token_usage" jsonb,
 	"retry_count" integer DEFAULT 0 NOT NULL,
-	"parent_step_id" uuid
+	"parent_step_id" text
 );
 --> statement-breakpoint
 CREATE TABLE "executions" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"workflow_id" uuid NOT NULL,
-	"workflow_version_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"workflow_id" text NOT NULL,
+	"workflow_version_id" text NOT NULL,
 	"triggered_by_id" text,
 	"trigger_type" "trigger_type" NOT NULL,
 	"trigger_payload" jsonb,
@@ -90,9 +90,9 @@ CREATE TABLE "executions" (
 );
 --> statement-breakpoint
 CREATE TABLE "gate_approvals" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"execution_id" uuid NOT NULL,
-	"step_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"execution_id" text NOT NULL,
+	"step_id" text NOT NULL,
 	"gate_node_id" text NOT NULL,
 	"status" "gate_status" DEFAULT 'pending' NOT NULL,
 	"assigned_to" text[],
@@ -105,15 +105,15 @@ CREATE TABLE "gate_approvals" (
 );
 --> statement-breakpoint
 CREATE TABLE "organization_members" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
 	"user_id" text NOT NULL,
 	"role" "org_role" DEFAULT 'member' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "organizations" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"plan" "plan" DEFAULT 'free' NOT NULL,
@@ -122,8 +122,8 @@ CREATE TABLE "organizations" (
 );
 --> statement-breakpoint
 CREATE TABLE "projects" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"description" text,
@@ -145,8 +145,8 @@ CREATE TABLE "sessions" (
 );
 --> statement-breakpoint
 CREATE TABLE "team_templates" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text NOT NULL,
 	"name" text NOT NULL,
 	"description" text,
 	"pattern" "team_pattern" NOT NULL,
@@ -177,8 +177,8 @@ CREATE TABLE "verifications" (
 );
 --> statement-breakpoint
 CREATE TABLE "workflow_templates" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"organization_id" uuid,
+	"id" text PRIMARY KEY NOT NULL,
+	"organization_id" text,
 	"name" text NOT NULL,
 	"description" text NOT NULL,
 	"category" text NOT NULL,
@@ -189,11 +189,11 @@ CREATE TABLE "workflow_templates" (
 );
 --> statement-breakpoint
 CREATE TABLE "workflow_versions" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"workflow_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"workflow_id" text NOT NULL,
 	"version" integer NOT NULL,
 	"branch" text DEFAULT 'main' NOT NULL,
-	"parent_version_id" uuid,
+	"parent_version_id" text,
 	"definition" jsonb NOT NULL,
 	"change_message" text,
 	"created_by_id" text NOT NULL,
@@ -201,13 +201,13 @@ CREATE TABLE "workflow_versions" (
 );
 --> statement-breakpoint
 CREATE TABLE "workflows" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"project_id" uuid NOT NULL,
+	"id" text PRIMARY KEY NOT NULL,
+	"project_id" text NOT NULL,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"description" text,
-	"current_version_id" uuid,
-	"published_version_id" uuid,
+	"current_version_id" text,
+	"published_version_id" text,
 	"status" "workflow_status" DEFAULT 'draft' NOT NULL,
 	"created_by_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,

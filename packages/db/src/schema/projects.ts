@@ -1,6 +1,5 @@
 import {
   pgTable,
-  uuid,
   text,
   timestamp,
   jsonb,
@@ -15,8 +14,8 @@ import { organizations } from './organizations';
 export const projects = pgTable(
   'projects',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id')
+    id: text('id').primaryKey(),
+    organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),

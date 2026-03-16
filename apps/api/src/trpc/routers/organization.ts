@@ -30,11 +30,11 @@ const inviteMemberInput = z.object({
 });
 
 const removeMemberInput = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().min(1),
 });
 
 const updateMemberRoleInput = z.object({
-  userId: z.string().uuid(),
+  userId: z.string().min(1),
   role: z.enum(['admin', 'member', 'viewer']),
 });
 

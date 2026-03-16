@@ -1,7 +1,6 @@
 import {
   pgTable,
   pgEnum,
-  uuid,
   text,
   timestamp,
   index,
@@ -23,8 +22,8 @@ export const apiKeyProviderEnum = pgEnum('api_key_provider', [
 export const apiKeys = pgTable(
   'api_keys',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id')
+    id: text('id').primaryKey(),
+    organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),

@@ -5,9 +5,8 @@
 import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 import { eq, and, desc, sql, like } from 'drizzle-orm';
+import { createId } from '@paralleldrive/cuid2';
 import { workflows, workflowVersions } from '@toa/db';
-import { validateWorkflow, type ValidationResult } from '@toa/engine';
-import { diffWorkflows, type WorkflowDefinition } from '@toa/shared';
 import { createRouter, orgProcedure, requirePermission } from '../trpc';
 
 // ---------------------------------------------------------------------------
@@ -15,7 +14,7 @@ import { createRouter, orgProcedure, requirePermission } from '../trpc';
 // ---------------------------------------------------------------------------
 
 const listInput = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.string().min(1),
   status: z.enum(['draft', 'published', 'archived']).optional(),
   search: z.string().optional(),
   limit: z.number().int().min(1).max(100).default(20),
@@ -23,62 +22,62 @@ const listInput = z.object({
 });
 
 const getInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 const createInput = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.string().min(1),
   name: z.string().min(1).max(128),
-  slug: z.string().min(1).max(128),
+  slug: z.string().min(1).max(128).optional(),
   description: z.string().max(2000).optional(),
 });
 
 const updateInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   name: z.string().min(1).max(128).optional(),
   description: z.string().max(2000).optional().nullable(),
   status: z.enum(['draft', 'published', 'archived']).optional(),
 });
 
 const deleteInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 const saveVersionInput = z.object({
-  workflowId: z.string().uuid(),
+  workflowId: z.string().min(1),
   definition: z.record(z.string(), z.unknown()),
   changeMessage: z.string().max(500).optional(),
   branch: z.string().default('main'),
 });
 
 const getVersionInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
 });
 
 const listVersionsInput = z.object({
-  workflowId: z.string().uuid(),
+  workflowId: z.string().min(1),
   branch: z.string().optional(),
   limit: z.number().int().min(1).max(100).default(20),
   offset: z.number().int().min(0).default(0),
 });
 
 const diffVersionsInput = z.object({
-  versionAId: z.string().uuid(),
-  versionBId: z.string().uuid(),
+  versionAId: z.string().min(1),
+  versionBId: z.string().min(1),
 });
 
 const rollbackInput = z.object({
-  workflowId: z.string().uuid(),
-  versionId: z.string().uuid(),
+  workflowId: z.string().min(1),
+  versionId: z.string().min(1),
 });
 
 const publishInput = z.object({
-  workflowId: z.string().uuid(),
-  versionId: z.string().uuid(),
+  workflowId: z.string().min(1),
+  versionId: z.string().min(1),
 });
 
 const unpublishInput = z.object({
-  workflowId: z.string().uuid(),
+  workflowId: z.string().min(1),
 });
 
 const validateInput = z.object({
@@ -86,10 +85,10 @@ const validateInput = z.object({
 });
 
 const duplicateInput = z.object({
-  id: z.string().uuid(),
+  id: z.string().min(1),
   name: z.string().min(1).max(128),
   slug: z.string().min(1).max(128),
-  projectId: z.string().uuid().optional(),
+  projectId: z.string().min(1).optional(),
 });
 
 // ---------------------------------------------------------------------------
@@ -162,12 +161,14 @@ export const workflowRouter = createRouter({
     .use(requirePermission('workflow', 'create'))
     .input(createInput)
     .mutation(async ({ ctx, input }) => {
+      const slug = input.slug ?? input.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').slice(0, 128);
       const [workflow] = await ctx.db
         .insert(workflows)
         .values({
+          id: createId(),
           projectId: input.projectId,
           name: input.name,
-          slug: input.slug,
+          slug,
           description: input.description,
           status: 'draft',
           createdById: ctx.user.id,
@@ -251,6 +252,7 @@ export const workflowRouter = createRouter({
       const [version] = await ctx.db
         .insert(workflowVersions)
         .values({
+          id: createId(),
           workflowId: input.workflowId,
           version: nextVersion,
           branch: input.branch,
@@ -396,6 +398,7 @@ export const workflowRouter = createRouter({
       const [newVersion] = await ctx.db
         .insert(workflowVersions)
         .values({
+          id: createId(),
           workflowId: input.workflowId,
           version: nextVersion,
           branch: version.branch,
@@ -503,12 +506,14 @@ export const workflowRouter = createRouter({
       }
 
       // Create the new workflow
+      const dupSlug = (input.name ?? source.name).toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '').slice(0, 128);
       const [newWorkflow] = await ctx.db
         .insert(workflows)
         .values({
+          id: createId(),
           projectId: input.projectId ?? source.projectId,
           name: input.name,
-          slug: input.slug,
+          slug: input.slug ?? dupSlug,
           description: source.description,
           status: 'draft',
           createdById: ctx.user.id,
@@ -520,6 +525,7 @@ export const workflowRouter = createRouter({
         const [newVersion] = await ctx.db
           .insert(workflowVersions)
           .values({
+            id: createId(),
             workflowId: newWorkflow!.id,
             version: 1,
             branch: 'main',

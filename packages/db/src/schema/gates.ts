@@ -1,7 +1,6 @@
 import {
   pgTable,
   pgEnum,
-  uuid,
   text,
   timestamp,
   jsonb,
@@ -26,11 +25,11 @@ export const gateStatusEnum = pgEnum('gate_status', [
 export const gateApprovals = pgTable(
   'gate_approvals',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    executionId: uuid('execution_id')
+    id: text('id').primaryKey(),
+    executionId: text('execution_id')
       .notNull()
       .references(() => executions.id, { onDelete: 'cascade' }),
-    stepId: uuid('step_id')
+    stepId: text('step_id')
       .notNull()
       .references(() => executionSteps.id, { onDelete: 'cascade' }),
     gateNodeId: text('gate_node_id').notNull(),

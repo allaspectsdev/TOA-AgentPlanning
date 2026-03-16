@@ -1,7 +1,6 @@
 import {
   pgTable,
   pgEnum,
-  uuid,
   text,
   timestamp,
   jsonb,
@@ -26,8 +25,8 @@ export const teamPatternEnum = pgEnum('team_pattern', [
 export const agentTemplates = pgTable(
   'agent_templates',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id')
+    id: text('id').primaryKey(),
+    organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
@@ -78,8 +77,8 @@ export const agentTemplatesRelations = relations(
 export const teamTemplates = pgTable(
   'team_templates',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id')
+    id: text('id').primaryKey(),
+    organizationId: text('organization_id')
       .notNull()
       .references(() => organizations.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),

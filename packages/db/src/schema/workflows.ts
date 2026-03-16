@@ -1,7 +1,6 @@
 import {
   pgTable,
   pgEnum,
-  uuid,
   text,
   timestamp,
   integer,
@@ -26,15 +25,15 @@ export const workflowStatusEnum = pgEnum('workflow_status', [
 export const workflows = pgTable(
   'workflows',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    projectId: uuid('project_id')
+    id: text('id').primaryKey(),
+    projectId: text('project_id')
       .notNull()
       .references(() => projects.id, { onDelete: 'cascade' }),
     name: text('name').notNull(),
     slug: text('slug').notNull(),
     description: text('description'),
-    currentVersionId: uuid('current_version_id'),
-    publishedVersionId: uuid('published_version_id'),
+    currentVersionId: text('current_version_id'),
+    publishedVersionId: text('published_version_id'),
     status: workflowStatusEnum('status').notNull().default('draft'),
     createdById: text('created_by_id')
       .notNull()
@@ -84,13 +83,13 @@ export const workflowsRelations = relations(workflows, ({ one, many }) => ({
 export const workflowVersions = pgTable(
   'workflow_versions',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    workflowId: uuid('workflow_id')
+    id: text('id').primaryKey(),
+    workflowId: text('workflow_id')
       .notNull()
       .references(() => workflows.id, { onDelete: 'cascade' }),
     version: integer('version').notNull(),
     branch: text('branch').notNull().default('main'),
-    parentVersionId: uuid('parent_version_id'),
+    parentVersionId: text('parent_version_id'),
     definition: jsonb('definition').$type<Record<string, unknown>>().notNull(),
     changeMessage: text('change_message'),
     createdById: text('created_by_id')

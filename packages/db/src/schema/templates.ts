@@ -1,6 +1,5 @@
 import {
   pgTable,
-  uuid,
   text,
   timestamp,
   jsonb,
@@ -15,8 +14,8 @@ import { organizations } from './organizations';
 export const workflowTemplates = pgTable(
   'workflow_templates',
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    organizationId: uuid('organization_id').references(
+    id: text('id').primaryKey(),
+    organizationId: text('organization_id').references(
       () => organizations.id,
       { onDelete: 'set null' },
     ),

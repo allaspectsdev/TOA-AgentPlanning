@@ -15,6 +15,7 @@
     "@better-auth/drizzle-adapter": "^1.5.5",
     "@fastify/cors": "^11.0.0",
     "@fastify/websocket": "^11.0.0",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@toa/db": "workspace:*",
     "@toa/engine": "workspace:*",
     "@toa/shared": "workspace:*",
