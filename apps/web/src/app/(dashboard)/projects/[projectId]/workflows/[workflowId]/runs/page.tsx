@@ -72,7 +72,8 @@ export default function RunsPage() {
   const utils = trpc.useUtils();
 
   // Fetch runs from API
-  const { data: runs, isLoading } = trpc.execution.list.useQuery({ workflowId });
+  const { data: runsData, isLoading } = trpc.execution.list.useQuery({ workflowId });
+  const runs = (runsData as any)?.items ?? runsData ?? [];
 
   // Start execution mutation
   const startExecution = trpc.execution.start.useMutation({

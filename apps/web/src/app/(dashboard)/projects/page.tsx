@@ -163,7 +163,8 @@ function ProjectCard({ project }: { project: Project }) {
 
 export default function ProjectsPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { data: projects, isLoading, error } = trpc.project.list.useQuery();
+  const { data: projectsData, isLoading, error } = trpc.project.list.useQuery();
+  const projects = (projectsData as any)?.items ?? projectsData ?? [];
 
   return (
     <div className="p-6">

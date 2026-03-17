@@ -222,7 +222,8 @@ export default function WorkflowsPage() {
   const params = useParams<{ projectId: string }>();
   const projectId = params.projectId;
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { data: workflows, isLoading, error } = trpc.workflow.list.useQuery({ projectId });
+  const { data: workflowsData, isLoading, error } = trpc.workflow.list.useQuery({ projectId });
+  const workflows = (workflowsData as any)?.items ?? workflowsData ?? [];
 
   return (
     <div className="p-6">
